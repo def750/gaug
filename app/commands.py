@@ -1226,6 +1226,70 @@ async def fakeusers(ctx: Context) -> Optional[str]:
 
     return msg
 
+@command(Privileges.DEVELOPER)
+async def _wipe(ctx: Context) -> Optional[str]:
+    """Wipe player data."""
+    if ctx.player.id not in (3, 4):
+        return "You are not allowed to use this command."
+
+    if len(ctx.args) != 1:
+        return "Invalid syntax: !wipe <name>"
+
+    if not (t := await app.state.sessions.players.from_cache_or_sql(name=ctx.args[0])):
+        return "Could not find user."
+
+    # Get list of score id's
+    score_ids = await app.state.services.database.fetch_all(
+        "SELECT id FROM scores "
+        "WHERE userid = :user_id AND status>0",
+        {"user_id": t.id},
+    )
+    # Delete replays from .data/osr
+    for score in score_ids:
+        try:
+            os.remove(Path.cwd() / ".data/osr" / f"{score['id']}.osr")
+        except FileNotFoundError:
+            pass
+    del(score_ids) # Delete to free some memory
+
+    # Delete scores
+    await app.state.services.database.execute(
+        "DELETE FROM scores WHERE userid = :user_id",
+        {"user_id": t.id},
+    )
+
+    # Reset stats
+    await app.state.services.database.execute(
+        "UPDATE stats SET "
+        "tscore=0, rscore=0, pp=0, plays=0, playtime=0, "
+        "acc=0, max_combo=0, total_hits=0, xh_count=0, "
+        "x_count=0, sh_count=0, s_count=0, a_count=0 "
+        "WHERE id = :user_id",
+        {"user_id": t.id},
+    )
+
+    # Delete achievements
+    await app.state.services.database.execute(
+        "DELETE FROM user_achievements WHERE userid=:user_id",
+        {"user_id": t.id},
+    )
+
+    # Yeet him from redis lb
+    for mode in range(0, 9):
+        await app.state.services.redis.zrem(
+            f"bancho:leaderboard:{mode}",
+            t.id,
+        )
+        await app.state.services.redis.zrem(
+            f'bancho:leaderboard:{mode}:{t.geoloc["country"]["acronym"]}',
+            t.id,
+        )
+
+    # Kick player to refresh their app.state
+    if t.online:
+        t.logout()
+
+    return f"Wiped {t}'s data."
 
 @command(Privileges.DEVELOPER)
 async def stealth(ctx: Context) -> Optional[str]:
