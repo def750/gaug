@@ -65,7 +65,7 @@ from app.utils import seconds_readable
 
 import json
 from cmyui import discord as cd
-from constants.gamemodes import GULAG_2_INT, GULAG_2_INT_DEFAULT, GULAG_2_STR_DEFUALT
+from app.constants.gamemodes import GULAG_2_INT, GULAG_2_INT_DEFAULT, GULAG_2_STR_DEFUALT
 
 modedict = {
     0: "STD",
@@ -589,7 +589,7 @@ async def get_apikey(ctx: Context) -> Optional[str]:
         ),
     )
     return f"Your API key is now: {ctx.player.api_key}"
-@command(Privileges.NORMAL)
+@command(Privileges.UNRESTRICTED)
 async def _banchorank(ctx: Context) -> Optional[str]:
     """Curious what your bancho rank would be?."""
 
