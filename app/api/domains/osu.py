@@ -1840,161 +1840,161 @@ async def peppyDMHandler():
 """ ingame registration """
 
 
-@router.post("/users")
-async def register_account(
-    request: Request,
-    username: str = Form(..., alias="user[username]"),
-    email: str = Form(..., alias="user[user_email]"),
-    pw_plaintext: str = Form(..., alias="user[password]"),
-    check: int = Form(...),
-    cloudflare_country: Optional[str] = Header(None, alias="CF-IPCountry"),
-    #
-    # TODO: allow nginx to be optional
-    forwarded_ip: str = Header(..., alias="X-Forwarded-For"),
-    real_ip: str = Header(..., alias="X-Real-IP"),
-):
-    safe_name = make_safe_name(username)
-
-    if not all((username, email, pw_plaintext)):
-        return Response(
-            content=b"Missing required params",
-            status_code=status.HTTP_400_BAD_REQUEST,
-        )
-
-    # ensure all args passed
-    # are safe for registration.
-    errors: Mapping[str, list[str]] = defaultdict(list)
-
-    # Usernames must:
-    # - be within 2-15 characters in length
-    # - not contain both ' ' and '_', one is fine
-    # - not be in the config's `disallowed_names` list
-    # - not already be taken by another player
-    if not regexes.USERNAME.match(username):
-        errors["username"].append("Must be 2-15 characters in length.")
-
-    if "_" in username and " " in username:
-        errors["username"].append('May contain "_" and " ", but not both.')
-
-    if username in app.settings.DISALLOWED_NAMES:
-        errors["username"].append("Disallowed username; pick another.")
-
-    if "username" not in errors:
-        if await app.state.services.database.fetch_one(
-            "SELECT 1 FROM users WHERE safe_name = :safe_name",
-            {"safe_name": safe_name},
-        ):
-            errors["username"].append("Username already taken by another player.")
-
-    # Emails must:
-    # - match the regex `^[^@\s]{1,200}@[^@\s\.]{1,30}\.[^@\.\s]{1,24}$`
-    # - not already be taken by another player
-    if not regexes.EMAIL.match(email):
-        errors["user_email"].append("Invalid email syntax.")
-    else:
-        if await app.state.services.database.fetch_one(
-            "SELECT 1 FROM users WHERE email = :email",
-            {"email": email},
-        ):
-            errors["user_email"].append("Email already taken by another player.")
-
-    # Passwords must:
-    # - be within 8-32 characters in length
-    # - have more than 3 unique characters
-    # - not be in the config's `disallowed_passwords` list
-    if not 8 <= len(pw_plaintext) <= 32:
-        errors["password"].append("Must be 8-32 characters in length.")
-
-    if len(set(pw_plaintext)) <= 3:
-        errors["password"].append("Must have more than 3 unique characters.")
-
-    if pw_plaintext.lower() in app.settings.DISALLOWED_PASSWORDS:
-        errors["password"].append("That password was deemed too simple.")
-
-    if errors:
-        # we have errors to send back, send them back delimited by newlines.
-        errors = {k: ["\n".join(v)] for k, v in errors.items()}
-        errors_full = {"form_error": {"user": errors}}
-        return ORJSONResponse(
-            content=errors_full,
-            status_code=status.HTTP_400_BAD_REQUEST,
-        )
-
-    if check == 0:
-        # the client isn't just checking values,
-        # they want to register the account now.
-        # make the md5 & bcrypt the md5 for sql.
-        pw_md5 = hashlib.md5(pw_plaintext.encode()).hexdigest().encode()
-        pw_bcrypt = bcrypt.hashpw(pw_md5, bcrypt.gensalt())
-        app.state.cache.bcrypt[pw_bcrypt] = pw_md5  # cache result for login
-
-        if cloudflare_country:
-            # best case, dev has enabled ip geolocation in the
-            # network tab of cloudflare, so it sends the iso code.
-            country_acronym = cloudflare_country.lower()
-        else:
-            # backup method, get the user's ip and
-            # do a db lookup to get their country.
-            ip = app.state.services.ip_resolver.get_ip(request.headers)
-
-            if not ip.is_private:
-                if app.state.services.geoloc_db is not None:
-                    # decent case, dev has downloaded a geoloc db from
-                    # maxmind, so we can do a local db lookup. (~1-5ms)
-                    # https://www.maxmind.com/en/home
-                    geoloc = app.state.services.fetch_geoloc_db(ip)
-                else:
-                    # worst case, we must do an external db lookup
-                    # using a public api. (depends, `ping ip-api.com`)
-                    geoloc = await app.state.services.fetch_geoloc_web(ip)
-
-                if geoloc is not None:
-                    country_acronym = geoloc["country"]["acronym"]
-                else:
-                    country_acronym = "xx"
-            else:
-                # localhost, unknown country
-                country_acronym = "xx"
-
-        async with app.state.services.database.transaction():
-            # add to `users` table.
-            user_id = await app.state.services.database.execute(
-                "INSERT INTO users "
-                "(name, safe_name, email, pw_bcrypt, country, creation_time, latest_activity) "
-                "VALUES (:name, :safe_name, :email, :pw_bcrypt, :country, UNIX_TIMESTAMP(), UNIX_TIMESTAMP())",
-                {
-                    "name": username,
-                    "safe_name": safe_name,
-                    "email": email,
-                    "pw_bcrypt": pw_bcrypt,
-                    "country": country_acronym,
-                },
-            )
-
-            # add to `stats` table.
-            await app.state.services.database.execute_many(
-                "INSERT INTO stats (id, mode) VALUES (:user_id, :mode)",
-                [
-                    {"user_id": user_id, "mode": mode}
-                    for mode in (
-                        0,  # vn!std
-                        1,  # vn!taiko
-                        2,  # vn!catch
-                        3,  # vn!mania
-                        4,  # rx!std
-                        5,  # rx!taiko
-                        6,  # rx!catch
-                        8,  # ap!std
-                    )
-                ],
-            )
-
-        if app.state.services.datadog:
-            app.state.services.datadog.increment("bancho.registrations")
-
-        log(f"<{username} ({user_id})> has registered!", Ansi.LGREEN)
-
-    return b"ok"  # success
+# @router.post("/users")
+# async def register_account(
+#     request: Request,
+#     username: str = Form(..., alias="user[username]"),
+#     email: str = Form(..., alias="user[user_email]"),
+#     pw_plaintext: str = Form(..., alias="user[password]"),
+#     check: int = Form(...),
+#     cloudflare_country: Optional[str] = Header(None, alias="CF-IPCountry"),
+#     #
+#     # TODO: allow nginx to be optional
+#     forwarded_ip: str = Header(..., alias="X-Forwarded-For"),
+#     real_ip: str = Header(..., alias="X-Real-IP"),
+# ):
+#     safe_name = make_safe_name(username)
+#
+#     if not all((username, email, pw_plaintext)):
+#         return Response(
+#             content=b"Missing required params",
+#             status_code=status.HTTP_400_BAD_REQUEST,
+#         )
+#
+#     # ensure all args passed
+#     # are safe for registration.
+#     errors: Mapping[str, list[str]] = defaultdict(list)
+#
+#     # Usernames must:
+#     # - be within 2-15 characters in length
+#     # - not contain both ' ' and '_', one is fine
+#     # - not be in the config's `disallowed_names` list
+#     # - not already be taken by another player
+#     if not regexes.USERNAME.match(username):
+#         errors["username"].append("Must be 2-15 characters in length.")
+#
+#     if "_" in username and " " in username:
+#         errors["username"].append('May contain "_" and " ", but not both.')
+#
+#     if username in app.settings.DISALLOWED_NAMES:
+#         errors["username"].append("Disallowed username; pick another.")
+#
+#     if "username" not in errors:
+#         if await app.state.services.database.fetch_one(
+#             "SELECT 1 FROM users WHERE safe_name = :safe_name",
+#             {"safe_name": safe_name},
+#         ):
+#             errors["username"].append("Username already taken by another player.")
+#
+#     # Emails must:
+#     # - match the regex `^[^@\s]{1,200}@[^@\s\.]{1,30}\.[^@\.\s]{1,24}$`
+#     # - not already be taken by another player
+#     if not regexes.EMAIL.match(email):
+#         errors["user_email"].append("Invalid email syntax.")
+#     else:
+#         if await app.state.services.database.fetch_one(
+#             "SELECT 1 FROM users WHERE email = :email",
+#             {"email": email},
+#         ):
+#             errors["user_email"].append("Email already taken by another player.")
+#
+#     # Passwords must:
+#     # - be within 8-32 characters in length
+#     # - have more than 3 unique characters
+#     # - not be in the config's `disallowed_passwords` list
+#     if not 8 <= len(pw_plaintext) <= 32:
+#         errors["password"].append("Must be 8-32 characters in length.")
+#
+#     if len(set(pw_plaintext)) <= 3:
+#         errors["password"].append("Must have more than 3 unique characters.")
+#
+#     if pw_plaintext.lower() in app.settings.DISALLOWED_PASSWORDS:
+#         errors["password"].append("That password was deemed too simple.")
+#
+#     if errors:
+#         # we have errors to send back, send them back delimited by newlines.
+#         errors = {k: ["\n".join(v)] for k, v in errors.items()}
+#         errors_full = {"form_error": {"user": errors}}
+#         return ORJSONResponse(
+#             content=errors_full,
+#             status_code=status.HTTP_400_BAD_REQUEST,
+#         )
+#
+#     if check == 0:
+#         # the client isn't just checking values,
+#         # they want to register the account now.
+#         # make the md5 & bcrypt the md5 for sql.
+#         pw_md5 = hashlib.md5(pw_plaintext.encode()).hexdigest().encode()
+#         pw_bcrypt = bcrypt.hashpw(pw_md5, bcrypt.gensalt())
+#         app.state.cache.bcrypt[pw_bcrypt] = pw_md5  # cache result for login
+#
+#         if cloudflare_country:
+#             # best case, dev has enabled ip geolocation in the
+#             # network tab of cloudflare, so it sends the iso code.
+#             country_acronym = cloudflare_country.lower()
+#         else:
+#             # backup method, get the user's ip and
+#             # do a db lookup to get their country.
+#             ip = app.state.services.ip_resolver.get_ip(request.headers)
+#
+#             if not ip.is_private:
+#                 if app.state.services.geoloc_db is not None:
+#                     # decent case, dev has downloaded a geoloc db from
+#                     # maxmind, so we can do a local db lookup. (~1-5ms)
+#                     # https://www.maxmind.com/en/home
+#                     geoloc = app.state.services.fetch_geoloc_db(ip)
+#                 else:
+#                     # worst case, we must do an external db lookup
+#                     # using a public api. (depends, `ping ip-api.com`)
+#                     geoloc = await app.state.services.fetch_geoloc_web(ip)
+#
+#                 if geoloc is not None:
+#                     country_acronym = geoloc["country"]["acronym"]
+#                 else:
+#                     country_acronym = "xx"
+#             else:
+#                 # localhost, unknown country
+#                 country_acronym = "xx"
+#
+#         async with app.state.services.database.transaction():
+#             # add to `users` table.
+#             user_id = await app.state.services.database.execute(
+#                 "INSERT INTO users "
+#                 "(name, safe_name, email, pw_bcrypt, country, creation_time, latest_activity) "
+#                 "VALUES (:name, :safe_name, :email, :pw_bcrypt, :country, UNIX_TIMESTAMP(), UNIX_TIMESTAMP())",
+#                 {
+#                     "name": username,
+#                     "safe_name": safe_name,
+#                     "email": email,
+#                     "pw_bcrypt": pw_bcrypt,
+#                     "country": country_acronym,
+#                 },
+#             )
+#
+#             # add to `stats` table.
+#             await app.state.services.database.execute_many(
+#                 "INSERT INTO stats (id, mode) VALUES (:user_id, :mode)",
+#                 [
+#                     {"user_id": user_id, "mode": mode}
+#                     for mode in (
+#                         0,  # vn!std
+#                         1,  # vn!taiko
+#                         2,  # vn!catch
+#                         3,  # vn!mania
+#                         4,  # rx!std
+#                         5,  # rx!taiko
+#                         6,  # rx!catch
+#                         8,  # ap!std
+#                     )
+#                 ],
+#             )
+#
+#         if app.state.services.datadog:
+#             app.state.services.datadog.increment("bancho.registrations")
+#
+#         log(f"<{username} ({user_id})> has registered!", Ansi.LGREEN)
+#
+#     return b"ok"  # success
 
 
 @router.post("/difficulty-rating")
