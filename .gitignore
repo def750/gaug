@@ -10,5 +10,5 @@ tools/migrate_v420/go.sum
 tools/migrate_v420/scoreMigrator
 venv/
 zenith/
-./r
-./tailwindwatch
+r
+tailwindwatch
