@@ -25,6 +25,81 @@ GAMEMODE_REPR_LIST = (
     "ap!mania",  # unused
 )
 
+#TODO: Rework 5 below dicts this to use 1 function maybe 2 instead of this bloat
+GAMEMODE_REPR_LIST = (
+    "vn!std",
+    "vn!taiko",
+    "vn!catch",
+    "vn!mania",
+    "rx!std",
+    "rx!taiko",
+    "rx!catch",
+    "rx!mania",  # unused
+    "ap!std",
+    "ap!taiko",  # unused
+    "ap!catch",  # unused
+    "ap!mania",  # unused
+)
+
+GULAG_2_INT_DEFAULT = {
+    "vn!std": 0,
+    "vn!taiko": 1,
+    "vn!catch": 2,
+    "vn!mania": 3,
+    "rx!std": 0,
+    "rx!taiko": 1,
+    "rx!catch": 2,
+    "rx!mania": 3,
+    "ap!std": 0,
+    "ap!taiko": 1,
+    "ap!catch": 2,
+    "ap!mania": 3,
+}
+
+GULAG_2_INT = {
+    "vn!std": 0,
+    "vn!taiko": 1,
+    "vn!catch": 2,
+    "vn!mania": 3,
+    "rx!std": 4,
+    "rx!taiko": 5,
+    "rx!catch": 6,
+    "rx!mania": 7,
+    "ap!std": 8,
+    "ap!taiko": 9,
+    "ap!catch": 10,
+    "ap!mania": 11,
+}
+
+GULAG_2_STR_DEFUALT = {
+    "vn!std": "std",
+    "vn!taiko": "taiko",
+    "vn!catch": "catch",
+    "vn!mania": "mania",
+    "rx!std": "std",
+    "rx!taiko": "taiko",
+    "rx!catch": "catch",
+    "rx!mania": "mania",
+    "ap!std": "std",
+    "ap!taiko": "taiko",
+    "ap!catch": "catch",
+    "ap!mania": "mania",
+}
+
+GULAG_INT_2_INT_DEFAULT = {
+    0: 0,
+    1: 1,
+    2: 2,
+    3: 3,
+    4: 0,
+    5: 1,
+    6: 2,
+    7: 3,
+    8: 0,
+    9: 1,
+    10: 2,
+    11: 3,
+}
 
 @unique
 @pymysql_encode(escape_enum)
