@@ -63,7 +63,9 @@ from app.usecases.performance import ScoreParams
 from app.utils import make_safe_name
 from app.utils import seconds_readable
 
+import json
 from cmyui import discord as cd
+from constants.gamemodes import GULAG_2_INT, GULAG_2_INT_DEFAULT, GULAG_2_STR_DEFUALT
 
 modedict = {
     0: "STD",
@@ -587,7 +589,43 @@ async def get_apikey(ctx: Context) -> Optional[str]:
         ),
     )
     return f"Your API key is now: {ctx.player.api_key}"
+@command(Privileges.NORMAL)
+async def _banchorank(ctx: Context) -> Optional[str]:
+    """Curious what your bancho rank would be?."""
 
+    # Make 1 optional argument
+    if len(ctx.args) < 1:
+        return "Invalid syntax: !banchorank <mode>"
+
+    if ctx.args[0] not in GAMEMODE_REPR_LIST:
+        return f'Valid gamemodes: {", ".join(GAMEMODE_REPR_LIST)}.'
+    elif ctx.args[0] in (
+        "rx!mania",
+        "ap!taiko",
+        "ap!catch",
+        "ap!mania",
+    ):
+        return "Impossible gamemode combination."
+
+    # Fetch user info from sql
+    pp = await app.state.services.database.fetch_one(
+        "SELECT pp FROM stats WHERE id = :user_id AND mode = :mode",
+        {"user_id": ctx.player.id, 'mode': GULAG_2_INT[ctx.args[0]]},
+    )
+    if pp[0] < 1:
+        return "You have no pp in this gamemode, go play something."
+
+    # Make API request to osu!daily
+    r = await app.state.services.http.get(
+        url="https://osudaily.net/api/pp.php",
+        params={
+            'k': str(app.settings.OSUDAILY_API_KEY),
+            't': 'pp',
+            'v': pp[0],
+            "m": GULAG_2_INT_DEFAULT[ctx.args[0]]
+    })
+    data = json.loads(await r.text())
+    return f"Your rank on bancho in osu!{GULAG_2_STR_DEFUALT[ctx.args[0]].capitalize()} would be around {data['rank']:,}"
 
 """ Nominator commands
 # The commands below allow users to
