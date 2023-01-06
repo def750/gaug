@@ -309,6 +309,8 @@ class SendMessage(BasePacket):
                 # save it to their player instance
                 # so we can use this elsewhere owo..
                 bmap = await Beatmap.from_bid(int(r_match["bid"]))
+                # TODO: Make a check if bid is -1, if so fetch by set_id, leave a note for player
+                # That set got fetched by set_id, not bid
 
                 if bmap:
                     # parse mode_vn int from regex
@@ -372,11 +374,11 @@ WELCOME_MSG = "\n".join(
 RESTRICTED_MSG = (
     "Your account is currently in restricted mode. "
     "If you believe this is a mistake, or have waited a period "
-    "greater than 3 months, you may appeal via the form on the site."
+    "greater than 3 months, you may appeal on our discord."
 )
 
 WELCOME_NOTIFICATION = app.packets.notification(
-    f"Welcome back to {BASE_DOMAIN}!\nRunning bancho.py v{app.settings.VERSION}.",
+    f"Welcome back to Seven Twenty Seven!",
 )
 
 OFFLINE_NOTIFICATION = app.packets.notification(
@@ -686,7 +688,8 @@ async def login(
                     "osu_token": "contact-staff",
                     "response_body": (
                         app.packets.notification(
-                            "Please contact staff directly to create an account.",
+                            "Your account got flagged by anticheat, it is not restricted. "
+                            "Please create ticked on discord to solve this.",
                         )
                         + app.packets.user_id(-1)
                     ),
