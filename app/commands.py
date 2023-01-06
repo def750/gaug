@@ -65,6 +65,15 @@ from app.repositories import players as players_repo
 from app.usecases.performance import ScoreParams
 from app.utils import seconds_readable
 
+from cmyui import discord as cd
+
+modedict = {
+    0: "STD",
+    1: "TAIKO",
+    2: "CATCH",
+    3: "MANIA",
+}
+
 if TYPE_CHECKING:
     from app.objects.channel import Channel
 
@@ -676,6 +685,45 @@ async def _map(ctx: Context) -> Optional[str]:
             "UPDATE map_requests SET active = 0 WHERE map_id IN :map_ids",
             {"map_ids": map_ids},
         )
+
+    if app.settings.RANKED_WEBHOOK is not None:
+        if ctx.args[0] == "rank":
+            ecolor = 0x66ccff
+        elif ctx.args[0] == "love":
+            ecolor = 0xff66ab
+        else:
+            ecolor = 0xbcbcbc
+        # Create discord embed for map
+        embed = cd.Embed(
+            description=f"[View map on our website](https://{app.settings.DOMAIN}/b/{bmap.id})",
+            color=ecolor,
+            timestamp=datetime.utcnow(),
+        )
+        embed.set_author(
+            name=f"[{modedict[bmap.mode]}] {bmap.artist} - {bmap.title} mapped by {bmap.creator} is now {bmap.status}!",
+        )
+        embed.add_field(
+            name="Download",
+            value=f"[osu!](https://osu.ppy.sh/b/{bmap.id})\n"
+                  f"[Mino](https://catboy.best/d/{bmap.set_id})\n"
+                  f"[Chimu](https://chimu./download/{bmap.set_id})\n",
+            inline=True
+        )
+        embed.add_field(
+            name=f"{bmap.status} by",
+            # markdown link
+            value=f"[{ctx.player.name}](https://{app.settings.DOMAIN}/u/{ctx.player.id})",
+            inline=True
+        )
+        embed.set_image(url=f'https://assets.ppy.sh/beatmaps/{bmap.set_id}/covers/cover.jpg')
+        embed.set_footer(
+            text=f"On {app.settings.DOMAIN} osu! server",
+            icon_url=f"https://{app.settings.DOMAIN}/static/favicon/favicon-32x32.png",
+        )
+        # Send embed to webhook
+        map_webhook = cd.Webhook(url=app.settings.RANKED_WEBHOOK)
+        map_webhook.add_embed(embed)
+        await cd.Webhook.post(map_webhook, app.state.services.http)
 
     return f"{bmap.embed} updated to {new_status!s}."
 
