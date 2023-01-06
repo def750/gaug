@@ -706,7 +706,8 @@ async def _map(ctx: Context) -> Optional[str]:
             name="Download",
             value=f"[osu!](https://osu.ppy.sh/b/{bmap.id})\n"
                   f"[Mino](https://catboy.best/d/{bmap.set_id})\n"
-                  f"[Chimu](https://chimu./download/{bmap.set_id})\n",
+                  f"[Chimu](https://chimu.moe/download/{bmap.set_id})\n"
+                  f"[Kitsu](https://kitsu.moe/download/{bmap.set_id})\n",
             inline=True
         )
         embed.add_field(
