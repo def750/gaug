@@ -1,4 +1,4 @@
-__all__ = ('db', 'http', 'version', 'cache')
+__all__ = ('db', 'version', 'cache')
 
 from typing import TYPE_CHECKING
 
@@ -9,7 +9,6 @@ if TYPE_CHECKING:
     from cmyui.version import Version
 
 db: 'AsyncSQLPool'
-http: 'ClientSession'
 version: 'Version'
 
 cache = {

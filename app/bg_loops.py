@@ -120,10 +120,6 @@ async def _website() -> None:
     # we recommend using a long randomly generated ascii string.
     app.secret_key = zconf.secret_key
     app.permanent_session_lifetime = dt.timedelta(days=30)
-    @app.before_serving
-    async def http_conn() -> None:
-        zglob.http = aiohttp.ClientSession(json_serialize=orjson.dumps)
-        log('ZENITH: Got our Client Session!', Ansi.LGREEN)
 
     # globals which can be used in template code
     _version = repr(version)
