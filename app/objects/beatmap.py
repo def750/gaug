@@ -247,6 +247,7 @@ class Beatmap:
 
     def __init__(self, map_set: BeatmapSet, **kwargs: Any) -> None:
         self.set = map_set
+        self.server = kwargs.get("server", "osu!")
 
         self.md5 = kwargs.get("md5", "")
         self.id = kwargs.get("id", 0)
@@ -317,6 +318,7 @@ class Beatmap:
         return {
             "md5": self.md5,
             "id": self.id,
+            "server": self.server,
             "set_id": self.set_id,
             "artist": self.artist,
             "title": self.title,
@@ -352,7 +354,6 @@ class Beatmap:
     async def from_md5(cls, md5: str, set_id: int = -1) -> Optional[Beatmap]:
         """Fetch a map from the cache, database, or osuapi by md5."""
         bmap = await cls._from_md5_cache(md5)
-
         if not bmap:
             # map not found in cache
 
@@ -361,7 +362,7 @@ class Beatmap:
 
             if set_id <= 0:
                 # set id not provided - fetch it from the map md5
-                rec = await maps_repo.fetch_one(server="osu!", md5=md5)
+                rec = await maps_repo.fetch_one(md5=md5)
 
                 if rec is not None:
                     # set found in db
@@ -403,7 +404,7 @@ class Beatmap:
             # to be efficient, we want to cache the whole set
             # at once rather than caching the individual map
 
-            rec = await maps_repo.fetch_one(server="osu!", id=bid)
+            rec = await maps_repo.fetch_one(id=bid)
 
             if rec is not None:
                 # set found in db
@@ -554,10 +555,12 @@ class BeatmapSet:
     def __init__(
         self,
         id: int,
+        server: str,
         last_osuapi_check: datetime,
         maps: Optional[list[Beatmap]] = None,
     ) -> None:
         self.id = id
+        self.server = server
 
         self.maps = maps or []
         self.last_osuapi_check = last_osuapi_check
@@ -645,7 +648,8 @@ class BeatmapSet:
             for old_id, old_map in old_maps.items():
                 if old_id not in new_maps:
                     # delete map from old_maps
-                    map_md5s_to_delete.add(old_map.md5)
+                    if old_map.server == "osu!":
+                        map_md5s_to_delete.add(old_map.md5)
                 else:
                     new_map = new_maps[old_id]
                     new_ranked_status = RankedStatus.from_osuapi(
@@ -703,8 +707,8 @@ class BeatmapSet:
             await app.state.services.database.execute(
                 "REPLACE INTO mapsets "
                 "(server, id, last_osuapi_check) "
-                'VALUES ("osu!", :id, :last_osuapi_check)',
-                {"id": self.id, "last_osuapi_check": self.last_osuapi_check},
+                'VALUES (:server, :id, :last_osuapi_check)',
+                {"server": self.server, "id": self.id, "last_osuapi_check": self.last_osuapi_check},
             )
 
             # update maps in sql
@@ -712,8 +716,7 @@ class BeatmapSet:
         else:
             # TODO: we have the map on disk but it's
             #       been removed from the osu!api.
-            map_md5s_to_delete = {bmap.md5 for bmap in self.maps}
-
+            map_md5s_to_delete = {bmap.md5 for bmap in self.maps if bmap.server == "osu!"}
             # delete maps
             await app.state.services.database.execute(
                 "DELETE FROM maps WHERE md5 IN :map_md5s",
@@ -744,7 +747,7 @@ class BeatmapSet:
             "plays, passes, mode, bpm, "
             "cs, od, ar, hp, diff"
             ") VALUES ("
-            '"osu!", :md5, :id, :set_id, '
+            ':server, :md5, :id, :set_id, '
             ":artist, :title, :version, :creator, "
             ":filename, :last_update, :total_length, "
             ":max_combo, :status, :frozen, "
@@ -753,6 +756,7 @@ class BeatmapSet:
             ")",
             [
                 {
+                    "server": bmap.server,
                     "md5": bmap.md5,
                     "id": bmap.id,
                     "set_id": bmap.set_id,
@@ -789,21 +793,22 @@ class BeatmapSet:
     async def _from_bsid_sql(cls, bsid: int) -> Optional[BeatmapSet]:
         """Fetch a mapset from the database by set id."""
         async with app.state.services.database.connection() as db_conn:
-            last_osuapi_check = await db_conn.fetch_val(
-                "SELECT last_osuapi_check FROM mapsets WHERE id = :set_id",
+            rec = await db_conn.fetch_one(
+                "SELECT last_osuapi_check, server FROM mapsets WHERE id = :set_id",
                 {"set_id": bsid},
-                column=0,  # last_osuapi_check
             )
 
-            if last_osuapi_check is None:
+            if rec['last_osuapi_check'] is None:
                 return None
+            rec = dict(rec)
 
-            bmap_set = cls(id=bsid, last_osuapi_check=last_osuapi_check)
+            bmap_set = cls(id=bsid, last_osuapi_check=rec['last_osuapi_check'], server=rec['server'])
 
-            for row in await maps_repo.fetch_many(server="osu!", set_id=bsid):
+            for row in await maps_repo.fetch_many(set_id=bsid):
                 bmap = Beatmap(
                     md5=row["md5"],
                     id=row["id"],
+                    server=row["server"],
                     set_id=row["set_id"],
                     artist=row["artist"],
                     title=row["title"],
@@ -841,7 +846,7 @@ class BeatmapSet:
                         .translate(IGNORED_BEATMAP_CHARS)
                     )
 
-                    await maps_repo.update("osu!", bmap.id, filename=bmap.filename)
+                    await maps_repo.update(bmap.server, bmap.id, filename=bmap.filename)
 
                 bmap_set.maps.append(bmap)
 
@@ -887,8 +892,8 @@ class BeatmapSet:
             await app.state.services.database.execute(
                 "REPLACE INTO mapsets "
                 "(server, id, last_osuapi_check) "
-                'VALUES ("osu!", :id, :last_osuapi_check)',
-                {"id": self.id, "last_osuapi_check": self.last_osuapi_check},
+                'VALUES (:server, :id, :last_osuapi_check)',
+                {"server": bmap.server,"id": self.id, "last_osuapi_check": self.last_osuapi_check},
             )
 
             await self._save_to_sql()

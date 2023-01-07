@@ -122,7 +122,7 @@ async def create(
 
 
 async def fetch_one(
-    server: str,
+    server: Optional[str] = None,
     id: Optional[int] = None,
     md5: Optional[str] = None,
     filename: Optional[str] = None,
@@ -130,11 +130,10 @@ async def fetch_one(
     """Fetch a beatmap entry from the database."""
     if id is None and md5 is None and filename is None:
         raise ValueError("Must provide at least one parameter.")
-
     query = f"""\
         SELECT {READ_PARAMS}
           FROM maps
-         WHERE server = :server
+         WHERE server = COALESCE(:server, server)
            AND id = COALESCE(:id, id)
            AND md5 = COALESCE(:md5, md5)
            AND filename = COALESCE(:filename, filename)
@@ -146,6 +145,7 @@ async def fetch_one(
         "filename": filename,
     }
     rec = await app.state.services.database.fetch_one(query, params)
+    print(params)
     return dict(rec) if rec is not None else None
 
 
@@ -186,7 +186,7 @@ async def fetch_count(
 
 
 async def fetch_many(
-    server: str,
+    server: Optional[str]=None,
     set_id: Optional[int] = None,
     status: Optional[int] = None,
     artist: Optional[str] = None,
@@ -201,7 +201,7 @@ async def fetch_many(
     query = f"""\
         SELECT {READ_PARAMS}
           FROM maps
-         WHERE server = :server
+         WHERE server = COALESCE(:server, server)
            AND set_id = COALESCE(:set_id, set_id)
            AND status = COALESCE(:status, status)
            AND artist = COALESCE(:artist, artist)

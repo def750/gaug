@@ -1398,7 +1398,6 @@ async def getScores(
         return b"-1|false"
     if map_md5 in app.state.cache.needs_update:
         return b"1|false"
-
     if mods_arg & Mods.RELAX:
         if mode_arg == 3:  # rx!mania doesn't exist
             mods_arg &= ~Mods.RELAX
@@ -1452,7 +1451,6 @@ async def getScores(
             # look it up in sql from the filename.
             map_exists = (
                 await maps_repo.fetch_one(
-                    server="osu!",
                     filename=map_filename,
                 )
                 is not None
@@ -1500,7 +1498,6 @@ async def getScores(
         rating = 0.0
 
     ## construct response for osu! client
-
     response_lines: list[str] = [
         # NOTE: fa stands for featured artist (for the ones that may not know)
         # {ranked_status}|{serv_has_osz2}|{bid}|{bsid}|{len(scores)}|{fa_track_id}|{fa_license_text}
