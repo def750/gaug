@@ -37,6 +37,7 @@ class Privileges(IntFlag):
     DEVELOPER = 1 << 14  # able to manage full server app.state.
 
     DONATOR = SUPPORTER | PREMIUM
+    PERKS = SUPPORTER | PREMIUM | ALUMNI | NOMINATOR | MODERATOR | ADMINISTRATOR | DEVELOPER
     STAFF = MODERATOR | ADMINISTRATOR | DEVELOPER
 
 

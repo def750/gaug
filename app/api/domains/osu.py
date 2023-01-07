@@ -1472,9 +1472,10 @@ async def getScores(
     if app.state.services.datadog:
         app.state.services.datadog.increment("bancho.leaderboards_served")
 
-    if bmap.status < RankedStatus.Ranked:
+    if bmap.status < RankedStatus.Ranked and not player.priv & Privileges.PERKS:
         # only show leaderboards for ranked,
         # approved, qualified, or loved maps.
+        # unless the player is supporter or staff
         return f"{int(bmap.status)}|false".encode()
 
     # fetch scores & personal best
