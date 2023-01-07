@@ -1118,6 +1118,15 @@ async def osuSubmitModularSelector(
     if not score.passed or score.mode >= GameMode.RELAX_OSU:
         # charts & achievements won't be shown ingame.
         ret = b"error: no"
+    if score.mode in (
+        GameMode.RELAX_TAIKO, GameMode.VANILLA_TAIKO
+    ) and score.mods & Mods.SCOREV2:
+        # Alert user that Taiko & ScoreV2 don't mix.
+        ret = b"error: no"
+        score.player.enqueue(app.packets.notification(
+            "ScoreV2 was disabled for taiko due to pp calculation bugs, sorry!"
+        ))
+
 
     else:
         # construct and send achievements & ranking charts to the client
