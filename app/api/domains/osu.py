@@ -460,7 +460,7 @@ DIRECT_SET_INFO_FMTSTR = (
     "{{RankedStatus}}|10.0|{{LastUpdate}}|{{{setid_spelling}}}|"
     "0|{{HasVideo}}|0|0|0|{{diffs}}"  # 0s are threadid, has_story,
     # filesize, filesize_novid.
-).format(setid_spelling="SetId" if USING_CHIMU else "SetID")
+).format(setid_spelling="SetID")
 
 DIRECT_MAP_INFO_FMTSTR = (
     "[{DifficultyRating:.2f}⭐] {DiffName} "
@@ -476,13 +476,9 @@ async def osuSearchHandler(
     mode: int = Query(..., alias="m", ge=-1, le=3),  # -1 for all
     page_num: int = Query(..., alias="p"),
 ):
-    if USING_CHIMU:
-        search_url = f"{app.settings.MIRROR_URL}/search"
-    elif USING_NASUYA:
-        search_url = f"{app.settings.MIRROR_URL}/api/v1/search"
-    else:
-        search_url = f"{app.settings.MIRROR_URL}/api/search"
 
+    search_url = f"{app.settings.MIRROR_URL}/api/search"
+    print(search_url)
     params: dict[str, object] = {"amount": 100, "offset": page_num * 100}
 
     # eventually we could try supporting these,
@@ -497,30 +493,11 @@ async def osuSearchHandler(
         # convert to osu!api status
         params["status"] = RankedStatus.from_osudirect(ranked_status).osu_api
 
-    if USING_NASUYA:
-        # nasuya can serialize to direct for us
-        params["osu_direct"] = True
-
     async with app.state.services.http_client.get(search_url, params=params) as resp:
         if resp.status != status.HTTP_200_OK:
-            if USING_CHIMU:
-                # chimu uses 404 for no maps found
-                if resp.status == status.HTTP_404_NOT_FOUND:
-                    return b"0"
-
             return b"-1\nFailed to retrieve data from the beatmap mirror."
 
-        if USING_NASUYA:
-            # nasuya returns in osu!direct format
-            return await resp.read()
-
         result = await resp.json()
-
-        if USING_CHIMU:
-            if result["code"] != 0:
-                return b"-1\nFailed to retrieve data from the beatmap mirror."
-
-            result = result["data"]
 
     lresult = len(result)  # send over 100 if we receive
     # 100 matches, so the client
@@ -531,11 +508,8 @@ async def osuSearchHandler(
         if bmap["ChildrenBeatmaps"] is None:
             continue
 
-        if USING_CHIMU:
-            bmap["HasVideo"] = int(bmap["HasVideo"])
-        else:
-            # cheesegull doesn't support vids
-            bmap["HasVideo"] = "0"
+        # cheesegull doesn't support vids
+        bmap["HasVideo"] = "0"
 
         diff_sorted_maps = sorted(
             bmap["ChildrenBeatmaps"],
@@ -1763,10 +1737,7 @@ async def get_osz(
     if no_video:
         map_set_id = map_set_id[:-1]
 
-    if USING_CHIMU:
-        query_str = f"download/{map_set_id}?n={int(not no_video)}"
-    else:
-        query_str = f"d/{map_set_id}"
+    query_str = f"d/{map_set_id}"
 
     return RedirectResponse(
         url=f"{app.settings.MIRROR_URL}/{query_str}",
