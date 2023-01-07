@@ -616,7 +616,7 @@ async def _banchorank(ctx: Context) -> Optional[str]:
         return "You have no pp in this gamemode, go play something."
 
     # Make API request to osu!daily
-    r = await app.state.services.http.get(
+    r = await app.state.services.http_client.get(
         url="https://osudaily.net/api/pp.php",
         params={
             'k': str(app.settings.OSUDAILY_API_KEY),
@@ -774,7 +774,7 @@ async def _map(ctx: Context) -> Optional[str]:
         # Send embed to webhook
         map_webhook = cd.Webhook(url=app.settings.RANKED_WEBHOOK)
         map_webhook.add_embed(embed)
-        await cd.Webhook.post(map_webhook, app.state.services.http)
+        await cd.Webhook.post(map_webhook, app.state.services.http_client)
 
     return f"{bmap.embed} updated to {new_status!s}."
 
