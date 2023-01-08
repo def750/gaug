@@ -39,6 +39,7 @@ from app.objects.menu import MenuCommands
 from app.objects.menu import MenuFunction
 from app.objects.score import Grade
 from app.objects.score import Score
+from app.packets import ReplayAction
 from app.repositories import stats as stats_repo
 from app.utils import escape_enum
 from app.utils import make_safe_name
@@ -335,6 +336,9 @@ class Player:
 
         # packet queue
         self._queue = bytearray()
+
+        # Map pauses
+        self.map_pauses: int = 0
 
     def __repr__(self) -> str:
         return f"<{self.name} ({self.id})>"

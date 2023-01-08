@@ -58,6 +58,7 @@ from app.objects.player import PresenceFilter
 from app.packets import BanchoPacketReader
 from app.packets import BasePacket
 from app.packets import ClientPackets
+from app.packets import ReplayAction
 from app.repositories import players as players_repo
 from app.state import services
 from app.usecases.performance import ScoreParams
@@ -207,6 +208,17 @@ class ChangeAction(BasePacket):
         p.status.mods = Mods(self.mods)
         p.status.mode = GameMode(self.mode)
         p.status.map_id = self.map_id
+
+        if p.status.action == Action.Playing:
+            # Make moai bot join spectate if player is playing
+            if p.status.map_id != -1:
+                # If player is playing a map, make moai bot spectate
+                p.enqueue(app.packets.spectator_joined(app.state.sessions.bot.id))
+        else:
+            # Make moai bot leave spectate if player is not playing
+            p.enqueue(app.packets.spectator_left(app.state.sessions.bot.id))
+
+
 
         # broadcast it to all online players.
         if not p.restricted:
@@ -996,8 +1008,15 @@ class SpectateFrames(BasePacket):
 
         # NOTE: this is given a fastpath here for efficiency due to the
         # sheer rate of usage of these packets in spectator mode.
+        if self.frame_bundle.action == ReplayAction.Pause:
+            # Send alert to the player that they're being paused.
+            p.map_pauses += 1
 
-        # data = app.packets.spectateFrames(self.frame_bundle.raw_data)
+        if self.frame_bundle.action == ReplayAction.Fail:
+            if p.map_pauses > 0:
+                p.enqueue(app.packets.notification("That's what you get for pausing, rethink your life choices."))
+                p.map_pauses = 0
+
         data = (
             struct.pack("<HxI", 15, len(self.frame_bundle.raw_data))
             + self.frame_bundle.raw_data

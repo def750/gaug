@@ -707,6 +707,11 @@ async def osuSubmitModularSelector(
     score.bmap = bmap
     score.player = player
 
+    # Map Pauses
+    map_pauses = score.player.map_pauses
+    # Reset the old counter as fast as possible after we've read it
+    player.map_pauses = 0
+
     ## perform checksum validation
 
     unique_id1, unique_id2 = unique_ids.split("|", maxsplit=1)
@@ -908,8 +913,8 @@ async def osuSubmitModularSelector(
         ":max_combo, :mods, :n300, :n100, "
         ":n50, :nmiss, :ngeki, :nkatu, "
         ":grade, :status, :mode, :play_time, "
-        ":time_elapsed, :client_flags, :user_id, :perfect, "
-        ":checksum)",
+        ":time_elapsed, :client_flags, :user_id,"
+        ":perfect, :pauses, :checksum)",
         {
             "map_md5": score.bmap.md5,
             "score": score.score,
@@ -931,6 +936,7 @@ async def osuSubmitModularSelector(
             "client_flags": score.client_flags,
             "user_id": score.player.id,
             "perfect": score.perfect,
+            "pauses": map_pauses,
             "checksum": score.client_checksum,
         },
     )
