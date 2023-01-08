@@ -924,7 +924,7 @@ async def user(ctx: Context) -> Optional[str]:
             name=" ".join(ctx.args),
         )
 
-        if not p:
+        if not player:
             return "Player not found."
 
     priv_list = [
