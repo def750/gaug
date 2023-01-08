@@ -210,14 +210,14 @@ class ChangeAction(BasePacket):
         player.status.mode = GameMode(self.mode)
         player.status.map_id = self.map_id
 
-        if p.status.action == Action.Playing:
+        if player.status.action == Action.Playing:
             # Make moai bot join spectate if player is playing
-            if p.status.map_id != -1:
+            if player.status.map_id != -1:
                 # If player is playing a map, make moai bot spectate
-                p.enqueue(app.packets.spectator_joined(app.state.sessions.bot.id))
+                player.enqueue(app.packets.spectator_joined(app.state.sessions.bot.id))
         else:
             # Make moai bot leave spectate if player is not playing
-            p.enqueue(app.packets.spectator_left(app.state.sessions.bot.id))
+            player.enqueue(app.packets.spectator_left(app.state.sessions.bot.id))
 
 
 
@@ -1024,12 +1024,12 @@ class SpectateFrames(BasePacket):
         # sheer rate of usage of these packets in spectator mode.
         if self.frame_bundle.action == ReplayAction.Pause:
             # Send alert to the player that they're being paused.
-            p.map_pauses += 1
+            player.map_pauses += 1
 
         if self.frame_bundle.action == ReplayAction.Fail:
-            if p.map_pauses > 0:
-                p.enqueue(app.packets.notification("That's what you get for pausing, rethink your life choices."))
-                p.map_pauses = 0
+            if player.map_pauses > 0:
+                player.enqueue(app.packets.notification("That's what you get for pausing, rethink your life choices."))
+                player.map_pauses = 0
 
         data = (
             struct.pack("<HxI", 15, len(self.frame_bundle.raw_data))
