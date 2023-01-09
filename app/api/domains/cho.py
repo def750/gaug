@@ -347,7 +347,7 @@ class SendMessage(BasePacket):
                     }
                 else:
                     # time out their previous /np
-                    player.last_np["timeout"] = 0.0
+                    player.last_np = None
 
             t_chan.send(msg, sender=player)
 
@@ -1235,7 +1235,7 @@ class SendPrivateMessage(BasePacket):
                         resp_msg = "Could not find map."
 
                         # time out their previous /np
-                        player.last_np["timeout"] = 0.0
+                        player.last_np = None
 
                     player.send(resp_msg, sender=target)
 
