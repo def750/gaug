@@ -1540,6 +1540,19 @@ async def server(ctx: Context) -> Optional[str]:
         ),
     )
 
+@command(Privileges.DEVELOPER, hidden=True)
+async def crashuser(ctx: Context) -> str:
+    """Crashes the persons game lmfao"""
+
+    if not ctx.args:
+        return "Invalid syntax: !crashuser <user>"
+    if not (target := await app.state.sessions.players.from_cache_or_sql(name=ctx.args[0])):
+        return "User not found."
+    if not target.online:
+        return "User is not online."
+
+    target.enqueue(app.packets.crash())
+    return ":^)"
 
 if app.settings.DEVELOPER_MODE:
     """Advanced (& potentially dangerous) commands"""

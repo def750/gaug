@@ -1268,3 +1268,9 @@ def switch_tournament_server(ip: str) -> bytes:
     # not on the client's normal endpoints,
     # but we can send it either way xd.
     return write(ServerPackets.SWITCH_TOURNAMENT_SERVER, (ip, osuTypes.string))
+
+# packet id: None
+def crash() -> bytes:
+    """Funi packets to crash client"""
+    return b"G\x00\x00\x04\x00\x00\x00\x80\x00\x00\x00\x08\x00\x00\x00\x00\x00\x00"
+
