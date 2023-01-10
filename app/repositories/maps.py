@@ -145,7 +145,6 @@ async def fetch_one(
         "filename": filename,
     }
     rec = await app.state.services.database.fetch_one(query, params)
-    print(params)
     return dict(rec) if rec is not None else None
 
 
