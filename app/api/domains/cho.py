@@ -215,11 +215,14 @@ class ChangeAction(BasePacket):
             if player.status.map_id != -1:
                 # If player is playing a map, make moai bot spectate
                 player.enqueue(app.packets.spectator_joined(app.state.sessions.bot.id))
+            if player.status.last_action != Action.Playing:
+                player.map_pauses = 0
         else:
             # Make moai bot leave spectate if player is not playing
             player.enqueue(app.packets.spectator_left(app.state.sessions.bot.id))
 
 
+        player.status.last_action = player.status.action
 
         # broadcast it to all online players.
         if not player.restricted:
@@ -1030,6 +1033,9 @@ class SpectateFrames(BasePacket):
             if player.map_pauses > 0:
                 player.enqueue(app.packets.notification("That's what you get for pausing, rethink your life choices."))
                 player.map_pauses = 0
+
+        elif self.frame_bundle.action == ReplayAction.NewSong:
+            player.map_pauses = 0
 
         data = (
             struct.pack("<HxI", 15, len(self.frame_bundle.raw_data))

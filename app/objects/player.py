@@ -112,6 +112,7 @@ class Status:
     mods: Mods = Mods.NOMOD
     mode: GameMode = GameMode.VANILLA_OSU
     map_id: int = 0
+    last_action: Action = None
 
 
 # temporary menu-related stuff
