@@ -12,3 +12,6 @@ venv/
 zenith/
 r
 tailwindwatch
+.venv/
+.mypy_cache/
+.pytest_cache/
