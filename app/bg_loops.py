@@ -29,6 +29,7 @@ async def initialize_housekeeping_tasks() -> None:
                 _update_bot_status(interval=5 * 60),
                 _disconnect_ghosts(interval=OSU_CLIENT_MIN_PING_INTERVAL // 3),
                 _website(),
+                _bot()
             )
         },
     )
@@ -120,6 +121,7 @@ async def _website() -> None:
     # we recommend using a long randomly generated ascii string.
     app.secret_key = zconf.secret_key
     app.permanent_session_lifetime = dt.timedelta(days=30)
+    app.config['TEMPLATES_AUTO_RELOAD'] = True
 
     # globals which can be used in template code
     _version = repr(version)
@@ -172,3 +174,95 @@ async def _website() -> None:
     #app.run(debug=zconf.debug) # blocking call
     if __name__ == "app.bg_loops":
         await serve(app, Config(), shutdown_trigger=lambda: asyncio.Future())
+
+
+import discord
+import os
+from discord.ext import commands
+from pathlib import Path
+import random
+from moai import botconfig
+
+async def _bot() -> None:
+    """Run the discord bot."""
+    intents = discord.Intents.all()
+    client = commands.Bot(
+        command_prefix=botconfig.PREFIX,
+        intents=intents,
+        application_id=botconfig.APPLICATION_ID,
+    )
+    app.state.bot.client = client
+    # Enable debug so we don't need to wait for slash commands to propagate
+
+
+    for dir in os.listdir(f'{botconfig.PATH_TO_FILES}cogs'):
+        for file in os.listdir(f'{botconfig.PATH_TO_FILES}cogs/{dir}'):
+            if file.endswith('.py') and not file.startswith('_'):
+                print(f"[DISCORD BOT] Loading {dir}/{file}...")
+                await client.load_extension(f'moai.cogs.{dir}.{file[:-3]}')
+                print(f'[DISCORD BOT] Loaded {dir}/{file}')
+
+    @client.event
+    async def on_ready() -> None:
+        log("[DISCORD BOT] Bot logged in", Ansi.GREEN)
+        log(f"Bot name: {client.user.name}")
+        log(f"Bot ID: {client.user.id}")
+        log(f"Bot Version: {app.state.bot.version}\n")
+
+    @client.command()
+    async def rlc(ctx: commands.Context, cog:str='all') -> None:
+        """Reloads cog(s)."""
+
+        # Check if user is owner
+        if ctx.author.id not in botconfig.OWNERS:
+            return await ctx.send("You are not allowed to use this command.", delete_after=10)
+
+        if cog == 'all':
+            for dir in os.listdir(f'{botconfig.PATH_TO_FILES}cogs'):
+                for file in os.listdir(f'{botconfig.PATH_TO_FILES}cogs/{dir}'):
+                    if file.endswith('.py') and not file.startswith('_'):
+                        print(f"[DISCORD BOT] Reloading {dir}/{file}...")
+                        await client.reload_extension(f'moai.cogs.{dir}.{file[:-3]}')
+                        print(f'[DISCORD BOT] Reloaded {dir}/{file}')
+            return await ctx.send("Reloaded all cogs.")
+        else:
+            # Check if cog exists, and if it's loaded
+            for dir in os.listdir(f'{botconfig.PATH_TO_FILES}cogs'):
+                for file in os.listdir(f'{botconfig.PATH_TO_FILES}cogs/{dir}'):
+                    if file == f'{cog}.py':
+                        await client.reload_extension(f'moai.cogs.{dir}.{cog}')
+                        return await ctx.send(f"Reloaded {dir}/{cog}.")
+
+        # Cog not found
+        return await ctx.send(f"Cog {cog} not found.")
+
+    @client.command()
+    async def reloadbot(ctx: commands.Context) -> None:
+        """Reloads the bot."""
+        # Check if user is owner
+        if ctx.author.id not in botconfig.OWNERS:
+            return await ctx.send("You are not allowed to use this command.", delete_after=10)
+
+        log("[DISCORD BOT] Reloading whole bot...", Ansi.LYELLOW)
+        await ctx.send("Reloading bot, results in console...")
+        # Reload the bot
+        await client.close()
+        await _bot()
+        log("[DISCORD BOT] Bot reloaded.", Ansi.LGREEN)
+
+    @client.event
+    async def on_message(message: discord.Message):
+        if message.author == client.user:
+            return
+
+        if message.content == "@someone":
+            await message.channel.send(f"<@{random.choice(message.guild.members).id}>")
+
+            # Delete original message
+            await message.delete()
+
+    await client.tree.sync()
+    await client.start(botconfig.TOKEN)
+
+
+
