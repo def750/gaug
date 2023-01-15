@@ -156,6 +156,8 @@ async def _website() -> None:
 
     from zenith.blueprints.frontend import frontend
     app.register_blueprint(frontend)
+    from zenith.blueprints.users import users
+    app.register_blueprint(users)
     from zenith.blueprints.api import api
     app.register_blueprint(api, url_prefix="/wapi")
     from zenith.blueprints.admin import admin
