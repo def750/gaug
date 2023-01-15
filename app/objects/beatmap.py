@@ -362,7 +362,7 @@ class Beatmap:
 
             if set_id <= 0:
                 # set id not provided - fetch it from the map md5
-                rec = await maps_repo.fetch_one(server="osu!", md5=md5)
+                rec = await maps_repo.fetch_one(md5=md5)
 
                 if rec is not None:
                     # set found in db
@@ -404,7 +404,7 @@ class Beatmap:
             # to be efficient, we want to cache the whole set
             # at once rather than caching the individual map
 
-            rec = await maps_repo.fetch_one(server="osu!", id=bid)
+            rec = await maps_repo.fetch_one(id=bid)
 
             if rec is not None:
                 # set found in db
@@ -760,7 +760,6 @@ class BeatmapSet:
             ")",
             [
                 {
-                    "server": bmap.server,
                     "md5": bmap.md5,
                     "id": bmap.id,
                     "server": bmap.server,
@@ -809,7 +808,7 @@ class BeatmapSet:
 
             bmap_set = cls(id=bsid, last_osuapi_check=rec['last_osuapi_check'], server=rec['server'])
 
-            for row in await maps_repo.fetch_many(server="osu!", set_id=bsid):
+            for row in await maps_repo.fetch_many(set_id=bsid):
                 bmap = Beatmap(
                     md5=row["md5"],
                     id=row["id"],

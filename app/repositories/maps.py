@@ -10,7 +10,7 @@ import app.state.services
 # | Field        | Type                   | Null | Key | Default | Extra |
 # +--------------+------------------------+------+-----+---------+-------+
 # | id           | int                    | NO   | PRI | NULL    |       |
-# | server       | enum('osu!','private') | NO   |     | osu!    |       |
+# | server       | enum('osu!','gulag') | NO   |     | osu!    |       |
 # | set_id       | int                    | NO   |     | NULL    |       |
 # | status       | int                    | NO   |     | NULL    |       |
 # | md5          | char(32)               | NO   | UNI | NULL    |       |
@@ -185,7 +185,7 @@ async def fetch_count(
 
 
 async def fetch_many(
-    server: Optional[Optional[str]=None] = None,
+    server: Optional[str] = None,
     set_id: Optional[int] = None,
     status: Optional[int] = None,
     artist: Optional[str] = None,
