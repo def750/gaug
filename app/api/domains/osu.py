@@ -716,9 +716,9 @@ async def osuSubmitModularSelector(
     score.player = player
 
     # Map Pauses
-    map_pauses = score.player.map_pauses
+    # map_pauses = score.player.map_pauses
     # Reset the old counter as fast as possible after we've read it
-    score.player.map_pauses = 0
+    # score.player.map_pauses = 0
 
     ## perform checksum validation
 
@@ -1005,7 +1005,7 @@ async def osuSubmitModularSelector(
             "client_flags": score.client_flags,
             "user_id": score.player.id,
             "perfect": score.perfect,
-            "pauses": map_pauses,
+            "pauses": None,
             "checksum": score.client_checksum,
         },
     )
