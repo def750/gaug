@@ -8,6 +8,7 @@ from enum import unique
 from pathlib import Path
 from typing import Optional
 from typing import TYPE_CHECKING
+from typing import Union
 
 import app.state
 import app.usecases.performance
@@ -28,6 +29,18 @@ __all__ = ("Grade", "SubmissionStatus", "Score")
 
 BEATMAPS_PATH = Path.cwd() / ".data/osu"
 
+
+EMOJIS = {
+    "xh" :  "<:rankxh:853753899206311976>",
+    "x"  :  "<:rankx:853753898817028147>",
+    "sh" :  "<:ranksh:853753899072094208>",
+    "s"  :  "<:ranks:853753899135402044>",
+    "a"  :  "<:ranka:853753899000004618>",
+    "b"  :  "<:rankb:853753899089657866>",
+    "c"  :  "<:rankc:853753898912448553>",
+    "d"  :  "<:rankd:853753898682155009>",
+    "f"  :  "<:rankf:853753898954391572>",
+}
 
 @unique
 class Grade(IntEnum):
@@ -59,6 +72,11 @@ class Grade(IntEnum):
             "f": Grade.F,
             "n": Grade.N,
         }[s.lower()]
+
+    @classmethod
+    @functools.cache
+    def emoji(cls, g: Union[str, int]) -> str:
+        return EMOJIS[g.lower()] if isinstance(g, str) else EMOJIS[cls(g).name.lower()]
 
     def __format__(self, format_spec: str) -> str:
         if format_spec == "stats_column":
