@@ -145,6 +145,8 @@ class Matches(list[Optional[Match]]):
     def get_free(self) -> Optional[int]:
         """Return the first free match id from `self`."""
         for idx, match in enumerate(self):
+            if idx == 0:
+                continue
             if match is None:
                 return idx
 
