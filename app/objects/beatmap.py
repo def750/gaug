@@ -631,8 +631,7 @@ class BeatmapSet:
     async def _update_if_available(self) -> None:
         """Fetch the newest data from the api, check for differences
         and propogate any update into our cache & database."""
-        api_data = await api_get_beatmaps(s=self.id)
-        if api_data:
+        if api_data := await api_get_beatmaps(s=self.id):
             old_maps = {bmap.id: bmap for bmap in self.maps}
             new_maps = {int(api_map["beatmap_id"]): api_map for api_map in api_data}
 
@@ -709,10 +708,7 @@ class BeatmapSet:
                 "REPLACE INTO mapsets "
                 "(server, id, last_osuapi_check) "
                 'VALUES (:server, :id, :last_osuapi_check)',
-                {
-                    "server": self.server,
-                    "id": self.id,
-                    "last_osuapi_check": self.last_osuapi_check},
+                {"server": self.server, "id": self.id, "last_osuapi_check": self.last_osuapi_check},
             )
 
             # update maps in sql
@@ -744,14 +740,14 @@ class BeatmapSet:
         """Save the object's attributes into the database."""
         await app.state.services.database.execute_many(
             "REPLACE INTO maps ("
-            "md5, id, server, set_id, "
+            "server, md5, id, set_id, "
             "artist, title, version, creator, "
             "filename, last_update, total_length, "
             "max_combo, status, frozen, "
             "plays, passes, mode, bpm, "
             "cs, od, ar, hp, diff"
             ") VALUES ("
-            ":md5, :id, :server, :set_id, "
+            ':server, :md5, :id, :set_id, '
             ":artist, :title, :version, :creator, "
             ":filename, :last_update, :total_length, "
             ":max_combo, :status, :frozen, "
@@ -760,9 +756,9 @@ class BeatmapSet:
             ")",
             [
                 {
+                    "server": bmap.server,
                     "md5": bmap.md5,
                     "id": bmap.id,
-                    "server": bmap.server,
                     "set_id": bmap.set_id,
                     "artist": bmap.artist,
                     "title": bmap.title,
@@ -802,7 +798,7 @@ class BeatmapSet:
                 {"set_id": bsid},
             )
 
-            if rec['last_osuapi_check'] is None:
+            if rec is None or rec['last_osuapi_check'] is None:
                 return None
             rec = dict(rec)
 
@@ -859,10 +855,8 @@ class BeatmapSet:
     @classmethod
     async def _from_bsid_osuapi(cls, bsid: int) -> Optional[BeatmapSet]:
         """Fetch a mapset from the osu!api by set id."""
-        api_data = await api_get_beatmaps(s=bsid)
-        if api_data:
+        if api_data := await api_get_beatmaps(s=bsid):
             self = cls(id=bsid, last_osuapi_check=datetime.now(), server="osu!")
-
             # XXX: pre-mapset bancho.py support
             # select all current beatmaps
             # that're frozen in the db
@@ -877,6 +871,7 @@ class BeatmapSet:
                 # newer version available for this map
                 bmap: Beatmap = Beatmap.__new__(Beatmap)
                 bmap.id = int(api_bmap["beatmap_id"])
+                bmap.server = self.server
 
                 if bmap.id in current_maps:
                     # map is currently frozen, keep it's status.
@@ -896,13 +891,9 @@ class BeatmapSet:
 
             await app.state.services.database.execute(
                 "REPLACE INTO mapsets "
-                "(id, server, last_osuapi_check) "
-                "VALUES (:id, :server, :last_osuapi_check)",
-                {
-                    "id": self.id,
-                    "server": self.server,
-                    "last_osuapi_check": self.last_osuapi_check,
-                },
+                "(server, id, last_osuapi_check) "
+                'VALUES (:server, :id, :last_osuapi_check)',
+                {"server": self.server, "id": self.id, "last_osuapi_check": self.last_osuapi_check},
             )
 
             await self._save_to_sql()
