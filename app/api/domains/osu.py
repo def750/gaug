@@ -71,6 +71,9 @@ from app.repositories import stats as stats_repo
 from app.utils import escape_enum
 from app.utils import pymysql_encode
 
+from cmyui import discord
+from datetime import datetime
+
 
 BEATMAPS_PATH = SystemPath.cwd() / ".data/osu"
 REPLAYS_PATH = SystemPath.cwd() / ".data/osr"
@@ -874,6 +877,46 @@ async def osuSubmitModularSelector(
                     f"with {score.acc:.2f}% for {performance}.",
                 ]
 
+                webhook_url = app.settings.NO1_WEBHOOK
+
+                embed = discord.Embed(description=f'[{score.bmap.full_name}]({score.bmap.url})', color=0x66ccff, timestamp=datetime.utcnow())
+
+                # Embed Header
+                embed.set_author(
+                    name=f'{score.player.full_name} set a new #1',
+                    url=score.player.url,
+                    icon_url=score.player.avatar_url)
+
+                # Set the embed image to the beatmap's cover photo
+                embed.set_image(url=f'https://assets.ppy.sh/beatmaps/{score.bmap.set_id}/covers/cover.jpg')
+
+                grade = score.grade.name
+                if grade == 'X' or grade == 'XH':
+                    grade = 'SS'
+                elif grade == 'SH':
+                    grade = 'S'
+
+                # Score details field
+                embed.add_field(
+                    name='Score details',
+                    value=f'**Grade:** {grade}\n'
+                          f'**Score:** {score.score}\n'
+                          f'**pp:** {round(score.pp, 2)}\n'
+                          f'**Accuracy:** {round(score.acc, 2)}\n'
+                          f'**Combo:** {score.max_combo}\n',
+                    inline=True
+                )
+
+                # Player details field
+                embed.add_field(
+                    name='Player details',
+                    value=f'[Profile link](https://{app.settings.DOMAIN}/u/{score.player.id})\n'
+                          f'**Global rank:** #{score.player.stats[score.mode].rank}\n'
+                          f'**Total pp:** {score.player.stats[score.mode].pp}\n'
+                          f'**Accuracy:** {round(score.player.stats[score.mode].acc, 2)}\n', inline=True)
+
+                webhook = discord.Webhook(url=webhook_url)
+
                 if score.mods:
                     ann.insert(1, f"+{score.mods!r}")
 
@@ -899,6 +942,23 @@ async def osuSubmitModularSelector(
                             ),
                         )
 
+                        prev_n1_rank = await app.state.services.redis.zrevrank(
+                            f"bancho:leaderboard:{score.mode.value}",
+                            str(score.player.id),
+                        )
+                        prev_n1_stats = await stats_repo.fetch_one(prev_n1["id"], score.mode.value)
+                        prev_n1_pp = prev_n1_stats["pp"]
+                        prev_n1_acc = prev_n1_stats["acc"]
+                        embed.add_field(
+                            name='Previous #1:',
+                            value=f'[{prev_n1["name"]}](https://{app.settings.DOMAIN}/u/{prev_n1["id"]})\n'
+                                  f'**Global rank:** #{prev_n1_rank}\n'
+                                  f'**Total pp:** {prev_n1_pp}\n'
+                                  f'**Accuracy:** {round(prev_n1_acc, 2)}\n', inline=True)
+
+
+                webhook.add_embed(embed)
+                await discord.Webhook.post(webhook, app.state.services.http_client)
                 announce_chan.send(" ".join(ann), sender=score.player, to_self=True)
 
         # this score is our best score.
@@ -2001,3 +2061,10 @@ async def difficultyRatingHandler(request: Request):
         url=f"https://osu.ppy.sh{request['path']}",
         status_code=status.HTTP_307_TEMPORARY_REDIRECT,
     )
+
+@router.get("/web/osu-osz2-bmsubmit-getid.php")
+async def osu_osz2_bsubmit_getid(request: Request):
+    # Print everything in the request
+    print(request.url)
+
+
