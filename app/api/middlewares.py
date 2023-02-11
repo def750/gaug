@@ -35,7 +35,12 @@ class MetricsMiddleware(BaseHTTPMiddleware):
             else Ansi.LRED
         )
 
-        url = f"{request.headers['host']}{request['path']}"
+        try:
+            url = f"{request.headers['host']}{request['path']}"
+        except KeyError:
+            # If host is not set, reject the request
+            url = f"{request['path']}"
+
 
         log(f"[{request.method}] {response.status_code} {url}", col, end=" | ")
         printc(f"Request took: {magnitude_fmt_time(time_elapsed)}", Ansi.LBLUE)
