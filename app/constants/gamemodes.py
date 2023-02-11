@@ -3,6 +3,9 @@ from __future__ import annotations
 import functools
 from enum import IntEnum
 from enum import unique
+from typing import Any
+from typing import Literal
+from typing import Union
 
 from app.constants.mods import Mods
 from app.utils import escape_enum
@@ -86,6 +89,21 @@ GULAG_2_STR_DEFUALT = {
     "ap!mania": "mania",
 }
 
+INT_GULAG_2_STR_DEFUALT = {
+    0: "std",
+    1: "taiko",
+    2: "catch",
+    3: "mania",
+    4: "std",
+    5: "taiko",
+    6: "catch",
+    7: "mania",
+    8: "std",
+    9: "taiko",
+    10: "catch",
+    11: "mania",
+}
+
 GULAG_INT_2_INT_DEFAULT = {
     0: 0,
     1: 1,
@@ -147,6 +165,6 @@ class GameMode(IntEnum):
     @property
     def as_vanilla(self) -> int:
         return self.value % 4
-
+    
     def __repr__(self) -> str:
         return GAMEMODE_REPR_LIST[self.value]
