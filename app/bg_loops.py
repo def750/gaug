@@ -184,6 +184,8 @@ from discord.ext import commands
 from pathlib import Path
 import random
 from moai import botconfig
+from typing import Literal, Optional
+import traceback
 
 async def _bot() -> None:
     """Run the discord bot."""
@@ -201,7 +203,11 @@ async def _bot() -> None:
         for file in os.listdir(f'{botconfig.PATH_TO_FILES}cogs/{dir}'):
             if file.endswith('.py') and not file.startswith('_'):
                 print(f"[DISCORD BOT] Loading {dir}/{file}...")
-                await client.load_extension(f'moai.cogs.{dir}.{file[:-3]}')
+                try:
+                    await client.load_extension(f'moai.cogs.{dir}.{file[:-3]}')
+                except Exception as e:
+                    print(f'[DISCORD BOT] Failed to load {dir}/{file}')
+                    traceback.print_exc()
                 print(f'[DISCORD BOT] Loaded {dir}/{file}')
 
     @client.event
@@ -224,9 +230,15 @@ async def _bot() -> None:
                 for file in os.listdir(f'{botconfig.PATH_TO_FILES}cogs/{dir}'):
                     if file.endswith('.py') and not file.startswith('_'):
                         print(f"[DISCORD BOT] Reloading {dir}/{file}...")
-                        await client.reload_extension(f'moai.cogs.{dir}.{file[:-3]}')
+                        try:
+                            await client.load_extension(f'moai.cogs.{dir}.{file[:-3]}')
+                        except Exception as e:
+                            print(f'[DISCORD BOT] Failed to reload {dir}/{file}')
+                            traceback.print_exc()
                         print(f'[DISCORD BOT] Reloaded {dir}/{file}')
+
             return await ctx.send("Reloaded all cogs.")
+
         else:
             # Check if cog exists, and if it's loaded
             for dir in os.listdir(f'{botconfig.PATH_TO_FILES}cogs'):
@@ -252,18 +264,41 @@ async def _bot() -> None:
         await _bot()
         log("[DISCORD BOT] Bot reloaded.", Ansi.LGREEN)
 
-    @client.event
-    async def on_message(message: discord.Message):
-        if message.author == client.user:
+    @client.command()
+    @commands.guild_only()
+    @commands.is_owner()
+    async def sync(
+        ctx: commands.Context, guilds: commands.Greedy[discord.Object], spec: Optional[Literal["~", "*", "^"]] = None
+    ) -> None:
+        if not guilds:
+            if spec == "l":
+                synced = await ctx.bot.tree.sync(guild=ctx.guild)
+            elif spec == "*":
+                ctx.bot.tree.copy_global_to(guild=ctx.guild)
+                synced = await ctx.bot.tree.sync(guild=ctx.guild)
+            elif spec == "^":
+                ctx.bot.tree.clear_commands(guild=ctx.guild)
+                await ctx.bot.tree.sync(guild=ctx.guild)
+                synced = []
+            else:
+                synced = await ctx.bot.tree.sync()
+
+            await ctx.send(
+                f"Synced {len(synced)} commands {'globally' if spec is None else 'to the current guild.'}"
+            )
             return
 
-        if message.content == "@someone":
-            await message.channel.send(f"<@{random.choice(message.guild.members).id}>")
+        ret = 0
+        for guild in guilds:
+            try:
+                await ctx.bot.tree.sync(guild=guild)
+            except discord.HTTPException:
+                pass
+            else:
+                ret += 1
 
-            # Delete original message
-            await message.delete()
+        await ctx.send(f"Synced the tree to {ret}/{len(guilds)}.")
 
-    await client.tree.sync()
     await client.start(botconfig.TOKEN)
 
 
