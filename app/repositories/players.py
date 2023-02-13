@@ -77,10 +77,11 @@ async def fetch_one(
     id: Optional[int] = None,
     name: Optional[str] = None,
     email: Optional[str] = None,
+    discord_id: Optional[int] = None,
     fetch_all_fields: bool = False,  # TODO: probably remove this if possible
 ) -> Optional[dict[str, Any]]:
     """Fetch a single player from the database."""
-    if id is None and name is None and email is None:
+    if id is None and name is None and email is None and discord_id is None:
         raise ValueError("Must provide at least one parameter.")
 
     query = f"""\
@@ -89,12 +90,15 @@ async def fetch_one(
          WHERE id = COALESCE(:id, id)
            AND safe_name = COALESCE(:safe_name, safe_name)
            AND email = COALESCE(:email, email)
+           AND discord_id = COALESCE(:discord_id, discord_id)
     """
     params = {
         "id": id,
         "safe_name": make_safe_name(name) if name is not None else None,
         "email": email,
+        "discord_id": discord_id,
     }
+
     rec = await app.state.services.database.fetch_one(query, params)
     return dict(rec) if rec is not None else None
 
@@ -247,5 +251,3 @@ async def update(
     rec = await app.state.services.database.fetch_one(query, params)
     return dict(rec) if rec is not None else None
 
-
-# TODO: delete?

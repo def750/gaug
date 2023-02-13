@@ -232,8 +232,10 @@ class Players(list[Player]):
         token: Optional[str] = None,
         id: Optional[int] = None,
         name: Optional[str] = None,
+        discord_id: Optional[int] = None,
     ) -> Optional[Player]:
         """Get a player by token, id, or name from cache."""
+        # TODO: optimize
         for player in self:
             if token is not None:
                 if player.token == token:
@@ -244,6 +246,9 @@ class Players(list[Player]):
             elif name is not None:
                 if player.safe_name == make_safe_name(name):
                     return player
+            elif discord_id is not None:
+                if player.discord_id == discord_id:
+                    return player
 
         return None
 
@@ -251,12 +256,14 @@ class Players(list[Player]):
         self,
         id: Optional[int] = None,
         name: Optional[str] = None,
+        discord_id: Optional[int] = None,
     ) -> Optional[Player]:
         """Get a player by token, id, or name from sql."""
         # try to get from sql.
         player = await players_repo.fetch_one(
             id=id,
             name=name,
+            discord_id=discord_id,
             fetch_all_fields=True,
         )
         if player is None:
@@ -287,12 +294,13 @@ class Players(list[Player]):
         self,
         id: Optional[int] = None,
         name: Optional[str] = None,
+        discord_id: Optional[int] = None,
     ) -> Optional[Player]:
         """Try to get player from cache, or sql as fallback."""
-        player = self.get(id=id, name=name)
+        player = self.get(id=id, name=name, discord_id=discord_id)
         if player is not None:
             return player
-        player = await self.get_sql(id=id, name=name)
+        player = await self.get_sql(id=id, name=name, discord_id=discord_id)
         if player is not None:
             return player
 

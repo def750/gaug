@@ -237,6 +237,12 @@ class Player:
         at the tail end of their next connection to the server.
         XXX: cls.enqueue() will add data to this queue, and
              cls.dequeue() will return the data, and remove it.
+
+    map_pauses: `int`
+        The number of times the player has paused a map. Currently unused.
+
+    discord_id: `int`
+        The player's discord id, if linked.
     """
 
     def __init__(
@@ -336,6 +342,9 @@ class Player:
 
         # Map pauses
         self.map_pauses: int = 0
+
+        # Discord ID
+        self.discord_id = extras.get("discord_id", None)
 
     def __repr__(self) -> str:
         return f"<{self.name} ({self.id})>"
