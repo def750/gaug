@@ -1,3 +1,6 @@
 [submodule "zenith"]
 	path = zenith
 	url = ./zenith/
+[submodule "moaizedong"]
+	path = moaizedong
+	url = ./moaizedong/
