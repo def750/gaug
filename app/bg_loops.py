@@ -29,11 +29,17 @@ async def initialize_housekeeping_tasks() -> None:
                 _update_bot_status(interval=5 * 60),
                 _disconnect_ghosts(interval=OSU_CLIENT_MIN_PING_INTERVAL // 3),
                 _website(),
-                _bot()
+                _bot(),
+                _datadog_metrics(interval=5),
             )
         },
     )
 
+async def _datadog_metrics(interval: int) -> None:
+    """Send metrics to datadog."""
+    while True:
+        app.state.services.datadog.gauge('bancho.online_players', len(app.state.sessions.players)-1)
+        await asyncio.sleep(interval)
 
 async def _remove_expired_donation_privileges(interval: int) -> None:
     """Remove donation privileges from users with expired sessions."""
@@ -156,8 +162,8 @@ async def _website() -> None:
 
     from zenith.blueprints.frontend import frontend
     app.register_blueprint(frontend)
-    from zenith.blueprints.users import users
-    app.register_blueprint(users)
+    # from zenith.blueprints.users import users
+    # app.register_blueprint(users)
     from zenith.blueprints.api import api
     app.register_blueprint(api, url_prefix="/wapi")
     from zenith.blueprints.admin import admin
@@ -171,7 +177,7 @@ async def _website() -> None:
     # Custom static data
     @app.route('/cdn/tw-elements/<path:filename>')
     async def custom_static(filename):
-        return await send_from_directory('/opt/gulag/zenith/static/js/twelements/', filename)
+        return await send_from_directory('/opt/gaug/zenith/static/js/twelements/', filename)
 
     #app.run(debug=zconf.debug) # blocking call
     if __name__ == "app.bg_loops":
@@ -183,7 +189,7 @@ import os
 from discord.ext import commands
 from pathlib import Path
 import random
-from moai import botconfig
+from moaizedong import botconfig
 from typing import Literal, Optional
 import traceback
 
@@ -196,19 +202,20 @@ async def _bot() -> None:
         application_id=botconfig.APPLICATION_ID,
     )
     app.state.bot.client = client
-    # Enable debug so we don't need to wait for slash commands to propagate
 
-
+    # Load cogs
     for dir in os.listdir(f'{botconfig.PATH_TO_FILES}cogs'):
-        for file in os.listdir(f'{botconfig.PATH_TO_FILES}cogs/{dir}'):
-            if file.endswith('.py') and not file.startswith('_'):
+        path = f'{botconfig.PATH_TO_FILES}cogs/{dir}'
+        if os.path.isdir(path):
+            files = [file for file in os.listdir(path) if file.endswith('.py') and not file.startswith('_')]
+            for file in files:
                 print(f"[DISCORD BOT] Loading {dir}/{file}...")
                 try:
-                    await client.load_extension(f'moai.cogs.{dir}.{file[:-3]}')
+                    await client.load_extension(f'moaizedong.cogs.{dir}.{file[:-3]}')
+                    print(f'[DISCORD BOT] Loaded {dir}/{file}')
                 except Exception as e:
                     print(f'[DISCORD BOT] Failed to load {dir}/{file}')
                     traceback.print_exc()
-                print(f'[DISCORD BOT] Loaded {dir}/{file}')
 
     @client.event
     async def on_ready() -> None:
@@ -217,38 +224,6 @@ async def _bot() -> None:
         log(f"Bot ID: {client.user.id}")
         log(f"Bot Version: {app.state.bot.version}\n")
 
-    @client.command()
-    async def rlc(ctx: commands.Context, cog:str='all') -> None:
-        """Reloads cog(s)."""
-
-        # Check if user is owner
-        if ctx.author.id not in botconfig.OWNERS:
-            return await ctx.send("You are not allowed to use this command.", delete_after=10)
-
-        if cog == 'all':
-            for dir in os.listdir(f'{botconfig.PATH_TO_FILES}cogs'):
-                for file in os.listdir(f'{botconfig.PATH_TO_FILES}cogs/{dir}'):
-                    if file.endswith('.py') and not file.startswith('_'):
-                        print(f"[DISCORD BOT] Reloading {dir}/{file}...")
-                        try:
-                            await client.load_extension(f'moai.cogs.{dir}.{file[:-3]}')
-                        except Exception as e:
-                            print(f'[DISCORD BOT] Failed to reload {dir}/{file}')
-                            traceback.print_exc()
-                        print(f'[DISCORD BOT] Reloaded {dir}/{file}')
-
-            return await ctx.send("Reloaded all cogs.")
-
-        else:
-            # Check if cog exists, and if it's loaded
-            for dir in os.listdir(f'{botconfig.PATH_TO_FILES}cogs'):
-                for file in os.listdir(f'{botconfig.PATH_TO_FILES}cogs/{dir}'):
-                    if file == f'{cog}.py':
-                        await client.reload_extension(f'moai.cogs.{dir}.{cog}')
-                        return await ctx.send(f"Reloaded {dir}/{cog}.")
-
-        # Cog not found
-        return await ctx.send(f"Cog {cog} not found.")
 
     @client.command()
     async def reloadbot(ctx: commands.Context) -> None:
@@ -300,6 +275,3 @@ async def _bot() -> None:
         await ctx.send(f"Synced the tree to {ret}/{len(guilds)}.")
 
     await client.start(botconfig.TOKEN)
-
-
-
