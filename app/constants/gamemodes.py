@@ -165,6 +165,6 @@ class GameMode(IntEnum):
     @property
     def as_vanilla(self) -> int:
         return self.value % 4
-    
+
     def __repr__(self) -> str:
         return GAMEMODE_REPR_LIST[self.value]

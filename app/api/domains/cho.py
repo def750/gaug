@@ -711,7 +711,7 @@ async def login(
                     "response_body": (
                         app.packets.notification(
                             "Your account got flagged by anticheat, it is not restricted. "
-                            "Please create ticked on discord to solve this.",
+                            "Please create ticket on discord to solve this.",
                         )
                         + app.packets.user_id(-1)
                     ),
@@ -869,6 +869,7 @@ async def login(
 
         # the player may have been sent mail while offline,
         # enqueue any messages from their respective authors.
+        # TODO: Move this to website
         mail_rows = await db_conn.fetch_all(
             "SELECT m.`msg`, m.`time`, m.`from_id`, "
             "(SELECT name FROM users WHERE id = m.`from_id`) AS `from`, "
@@ -951,9 +952,6 @@ async def login(
     app.state.sessions.players.append(player)
 
     if app.state.services.datadog:
-        if not player.restricted:
-            app.state.services.datadog.increment("bancho.online_players")
-
         time_taken = time.time() - login_time
         app.state.services.datadog.histogram("bancho.login_time", time_taken)
 
