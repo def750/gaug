@@ -1,0 +1,4459 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "FastAPI",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/": {
+      "get": {
+        "tags": [
+          "Bancho API"
+        ],
+        "summary": "Bancho Http Handler",
+        "description": "Handle a request from a web browser.",
+        "operationId": "bancho_http_handler__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Bancho API"
+        ],
+        "summary": "Bancho Handler",
+        "operationId": "bancho_handler__post",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "title": "Osu-Token",
+              "type": "string"
+            },
+            "name": "osu-token",
+            "in": "header"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "User-Agent",
+              "enum": [
+                "osu!"
+              ],
+              "type": "string"
+            },
+            "name": "user-agent",
+            "in": "header"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/web/osu-error.php": {
+      "post": {
+        "tags": [
+          "osu! web API"
+        ],
+        "summary": "Osuerror",
+        "description": "Handle an error submitted from the osu! client.",
+        "operationId": "osuError_web_osu_error_php_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_osuError_web_osu_error_php_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/web/osu-screenshot.php": {
+      "post": {
+        "tags": [
+          "osu! web API"
+        ],
+        "summary": "Osuscreenshot",
+        "operationId": "osuScreenshot_web_osu_screenshot_php_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_osuScreenshot_web_osu_screenshot_php_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/web/osu-getfriends.php": {
+      "get": {
+        "tags": [
+          "osu! web API"
+        ],
+        "summary": "Osugetfriends",
+        "operationId": "osuGetFriends_web_osu_getfriends_php_get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "U",
+              "type": "string"
+            },
+            "name": "u",
+            "in": "query"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "H",
+              "type": "string"
+            },
+            "name": "h",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/web/osu-getbeatmapinfo.php": {
+      "post": {
+        "tags": [
+          "osu! web API"
+        ],
+        "summary": "Osugetbeatmapinfo",
+        "operationId": "osuGetBeatmapInfo_web_osu_getbeatmapinfo_php_post",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "U",
+              "type": "string"
+            },
+            "name": "u",
+            "in": "query"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "H",
+              "type": "string"
+            },
+            "name": "h",
+            "in": "query"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OsuBeatmapRequestForm"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/web/osu-getfavourites.php": {
+      "get": {
+        "tags": [
+          "osu! web API"
+        ],
+        "summary": "Osugetfavourites",
+        "operationId": "osuGetFavourites_web_osu_getfavourites_php_get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "U",
+              "type": "string"
+            },
+            "name": "u",
+            "in": "query"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "H",
+              "type": "string"
+            },
+            "name": "h",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/web/osu-addfavourite.php": {
+      "get": {
+        "tags": [
+          "osu! web API"
+        ],
+        "summary": "Osuaddfavourite",
+        "operationId": "osuAddFavourite_web_osu_addfavourite_php_get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "A",
+              "type": "integer"
+            },
+            "name": "a",
+            "in": "query"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "U",
+              "type": "string"
+            },
+            "name": "u",
+            "in": "query"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "H",
+              "type": "string"
+            },
+            "name": "h",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/web/lastfm.php": {
+      "get": {
+        "tags": [
+          "osu! web API"
+        ],
+        "summary": "Lastfm",
+        "operationId": "lastFM_web_lastfm_php_get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Action",
+              "enum": [
+                "scrobble",
+                "np"
+              ],
+              "type": "string"
+            },
+            "name": "action",
+            "in": "query"
+          },
+          {
+            "description": "This flag is normally a beatmap ID, but is also used as a hidden anticheat flag within osu!",
+            "required": true,
+            "schema": {
+              "title": "B",
+              "type": "string",
+              "description": "This flag is normally a beatmap ID, but is also used as a hidden anticheat flag within osu!"
+            },
+            "name": "b",
+            "in": "query"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "Us",
+              "type": "string"
+            },
+            "name": "us",
+            "in": "query"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "Ha",
+              "type": "string"
+            },
+            "name": "ha",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/web/osu-search.php": {
+      "get": {
+        "tags": [
+          "osu! web API"
+        ],
+        "summary": "Osusearchhandler",
+        "operationId": "osuSearchHandler_web_osu_search_php_get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "R",
+              "maximum": 8,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "name": "r",
+            "in": "query"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "Q",
+              "type": "string"
+            },
+            "name": "q",
+            "in": "query"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "M",
+              "maximum": 3,
+              "minimum": -1,
+              "type": "integer"
+            },
+            "name": "m",
+            "in": "query"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "P",
+              "type": "integer"
+            },
+            "name": "p",
+            "in": "query"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "U",
+              "type": "string"
+            },
+            "name": "u",
+            "in": "query"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "H",
+              "type": "string"
+            },
+            "name": "h",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/web/osu-search-set.php": {
+      "get": {
+        "tags": [
+          "osu! web API"
+        ],
+        "summary": "Osusearchsethandler",
+        "operationId": "osuSearchSetHandler_web_osu_search_set_php_get",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "title": "S",
+              "type": "integer"
+            },
+            "name": "s",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "B",
+              "type": "integer"
+            },
+            "name": "b",
+            "in": "query"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "U",
+              "type": "string"
+            },
+            "name": "u",
+            "in": "query"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "H",
+              "type": "string"
+            },
+            "name": "h",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/web/osu-submit-modular-selector.php": {
+      "post": {
+        "tags": [
+          "osu! web API"
+        ],
+        "summary": "Osusubmitmodularselector",
+        "description": "Handle a score submission from an osu! client with an active session.",
+        "operationId": "osuSubmitModularSelector_web_osu_submit_modular_selector_php_post",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Token",
+              "type": "string"
+            },
+            "name": "token",
+            "in": "header"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_osuSubmitModularSelector_web_osu_submit_modular_selector_php_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/web/osu-getreplay.php": {
+      "get": {
+        "tags": [
+          "osu! web API"
+        ],
+        "summary": "Getreplay",
+        "operationId": "getReplay_web_osu_getreplay_php_get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "M",
+              "maximum": 3,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "name": "m",
+            "in": "query"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "C",
+              "type": "integer",
+              "max": 9223372036854776000,
+              "min": 0
+            },
+            "name": "c",
+            "in": "query"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "U",
+              "type": "string"
+            },
+            "name": "u",
+            "in": "query"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "H",
+              "type": "string"
+            },
+            "name": "h",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/web/osu-rate.php": {
+      "get": {
+        "tags": [
+          "osu! web API"
+        ],
+        "summary": "Osurate",
+        "operationId": "osuRate_web_osu_rate_php_get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "C",
+              "maxLength": 32,
+              "minLength": 32,
+              "type": "string"
+            },
+            "name": "c",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "V",
+              "maximum": 10,
+              "minimum": 1,
+              "type": "integer"
+            },
+            "name": "v",
+            "in": "query"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "U",
+              "type": "string"
+            },
+            "name": "u",
+            "in": "query"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "P",
+              "type": "string"
+            },
+            "name": "p",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/web/osu-osz2-getscores.php": {
+      "get": {
+        "tags": [
+          "osu! web API"
+        ],
+        "summary": "Getscores",
+        "operationId": "getScores_web_osu_osz2_getscores_php_get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "S",
+              "type": "boolean"
+            },
+            "name": "s",
+            "in": "query"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "Vv",
+              "type": "integer"
+            },
+            "name": "vv",
+            "in": "query"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "V",
+              "maximum": 4,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "name": "v",
+            "in": "query"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "C",
+              "maxLength": 32,
+              "minLength": 32,
+              "type": "string"
+            },
+            "name": "c",
+            "in": "query"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "F",
+              "type": "string"
+            },
+            "name": "f",
+            "in": "query"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "M",
+              "maximum": 3,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "name": "m",
+            "in": "query"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "I",
+              "maximum": 2147483647,
+              "minimum": -1,
+              "type": "integer"
+            },
+            "name": "i",
+            "in": "query"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "Mods",
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "name": "mods",
+            "in": "query"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "H",
+              "type": "string"
+            },
+            "name": "h",
+            "in": "query"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "A",
+              "type": "boolean"
+            },
+            "name": "a",
+            "in": "query"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "Us",
+              "type": "string"
+            },
+            "name": "us",
+            "in": "query"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "Ha",
+              "type": "string"
+            },
+            "name": "ha",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/web/osu-comment.php": {
+      "post": {
+        "tags": [
+          "osu! web API"
+        ],
+        "summary": "Osucomment",
+        "operationId": "osuComment_web_osu_comment_php_post",
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_osuComment_web_osu_comment_php_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/web/osu-markasread.php": {
+      "get": {
+        "tags": [
+          "osu! web API"
+        ],
+        "summary": "Osumarkasread",
+        "operationId": "osuMarkAsRead_web_osu_markasread_php_get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Channel",
+              "maxLength": 32,
+              "minLength": 0,
+              "type": "string"
+            },
+            "name": "channel",
+            "in": "query"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "U",
+              "type": "string"
+            },
+            "name": "u",
+            "in": "query"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "H",
+              "type": "string"
+            },
+            "name": "h",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/web/osu-getseasonal.php": {
+      "get": {
+        "tags": [
+          "osu! web API"
+        ],
+        "summary": "Osuseasonal",
+        "operationId": "osuSeasonal_web_osu_getseasonal_php_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          }
+        }
+      }
+    },
+    "/web/bancho_connect.php": {
+      "get": {
+        "tags": [
+          "osu! web API"
+        ],
+        "summary": "Banchoconnect",
+        "operationId": "banchoConnect_web_bancho_connect_php_get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "V",
+              "type": "string"
+            },
+            "name": "v",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fail",
+              "type": "string"
+            },
+            "name": "fail",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Fx",
+              "type": "string"
+            },
+            "name": "fx",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Ch",
+              "type": "string"
+            },
+            "name": "ch",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Retry",
+              "type": "boolean"
+            },
+            "name": "retry",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/web/check-updates.php": {
+      "get": {
+        "tags": [
+          "osu! web API"
+        ],
+        "summary": "Checkupdates",
+        "operationId": "checkUpdates_web_check_updates_php_get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Action",
+              "enum": [
+                "check",
+                "path",
+                "error"
+              ],
+              "type": "string"
+            },
+            "name": "action",
+            "in": "query"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "Stream",
+              "enum": [
+                "cuttingedge",
+                "stable40",
+                "beta40",
+                "stable"
+              ],
+              "type": "string"
+            },
+            "name": "stream",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/beatmapsets/{_}": {
+      "get": {
+        "tags": [
+          "osu! web API"
+        ],
+        "summary": "Osu Redirect",
+        "operationId": "osu_redirect_beatmapsets_____get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": " ",
+              "type": "integer"
+            },
+            "name": "_",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/beatmaps/{_}": {
+      "get": {
+        "tags": [
+          "osu! web API"
+        ],
+        "summary": "Osu Redirect",
+        "operationId": "osu_redirect_beatmaps_____get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": " ",
+              "type": "integer"
+            },
+            "name": "_",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/beatmapsets/{_}/discussion": {
+      "get": {
+        "tags": [
+          "osu! web API"
+        ],
+        "summary": "Osu Redirect",
+        "operationId": "osu_redirect_beatmapsets_____discussion_get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": " ",
+              "type": "integer"
+            },
+            "name": "_",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/community/forums/topics/{_}": {
+      "get": {
+        "tags": [
+          "osu! web API"
+        ],
+        "summary": "Osu Redirect",
+        "operationId": "osu_redirect_community_forums_topics_____get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": " ",
+              "type": "integer"
+            },
+            "name": "_",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/{_}": {
+      "get": {
+        "tags": [
+          "osu! web API"
+        ],
+        "summary": "Osu Redirect",
+        "operationId": "osu_redirect_user_____get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": " ",
+              "type": "integer"
+            },
+            "name": "_",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/u/{_}": {
+      "get": {
+        "tags": [
+          "osu! web API"
+        ],
+        "summary": "Osu Redirect",
+        "operationId": "osu_redirect_u_____get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": " ",
+              "type": "integer"
+            },
+            "name": "_",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ss/{screenshot_id}.{extension}": {
+      "get": {
+        "tags": [
+          "osu! web API"
+        ],
+        "summary": "Get Screenshot",
+        "description": "Serve a screenshot from the server, by filename.",
+        "operationId": "get_screenshot_ss__screenshot_id___extension__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Screenshot Id",
+              "pattern": "[a-zA-Z0-9-_]{8}",
+              "type": "string"
+            },
+            "name": "screenshot_id",
+            "in": "path"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "Extension",
+              "enum": [
+                "jpg",
+                "jpeg",
+                "png"
+              ],
+              "type": "string"
+            },
+            "name": "extension",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/d/{map_set_id}": {
+      "get": {
+        "tags": [
+          "osu! web API"
+        ],
+        "summary": "Get Osz",
+        "description": "Handle a map download request (osu.ppy.sh/d/*).",
+        "operationId": "get_osz_d__map_set_id__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Map Set Id",
+              "type": "string"
+            },
+            "name": "map_set_id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/web/maps/{map_filename}": {
+      "get": {
+        "tags": [
+          "osu! web API"
+        ],
+        "summary": "Get Updated Beatmap",
+        "description": "Send the latest .osu file the server has for a given map.",
+        "operationId": "get_updated_beatmap_web_maps__map_filename__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Map Filename",
+              "type": "string"
+            },
+            "name": "map_filename",
+            "in": "path"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "Host",
+              "type": "string"
+            },
+            "name": "host",
+            "in": "header"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/p/doyoureallywanttoaskpeppy": {
+      "get": {
+        "tags": [
+          "osu! web API"
+        ],
+        "summary": "Peppydmhandler",
+        "operationId": "peppyDMHandler_p_doyoureallywanttoaskpeppy_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          }
+        }
+      }
+    },
+    "/difficulty-rating": {
+      "post": {
+        "tags": [
+          "osu! web API"
+        ],
+        "summary": "Difficultyratinghandler",
+        "operationId": "difficultyRatingHandler_difficulty_rating_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          }
+        }
+      }
+    },
+    "/web/osu-osz2-bmsubmit-getid.php": {
+      "get": {
+        "tags": [
+          "osu! web API"
+        ],
+        "summary": "Osu Osz2 Bsubmit Getid",
+        "operationId": "osu_osz2_bsubmit_getid_web_osu_osz2_bmsubmit_getid_php_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          }
+        }
+      }
+    },
+    "/{file_path}": {
+      "get": {
+        "tags": [
+          "Beatmaps"
+        ],
+        "summary": "Everything",
+        "operationId": "everything__file_path__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/search_players": {
+      "get": {
+        "tags": [
+          "API v1"
+        ],
+        "summary": "Api Search Players",
+        "description": "Search for users on the server by name.",
+        "operationId": "api_search_players_v1_search_players_get",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "title": "Q",
+              "type": "string",
+              "max": 32,
+              "min": 2
+            },
+            "name": "q",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/get_player_count": {
+      "get": {
+        "tags": [
+          "API v1"
+        ],
+        "summary": "Api Get Player Count",
+        "description": "Get the current amount of online players.",
+        "operationId": "api_get_player_count_v1_get_player_count_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/get_player_info": {
+      "get": {
+        "tags": [
+          "API v1"
+        ],
+        "summary": "Api Get Player Info",
+        "description": "Return information about a given player.",
+        "operationId": "api_get_player_info_v1_get_player_info_get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Scope",
+              "enum": [
+                "stats",
+                "info",
+                "all"
+              ],
+              "type": "string"
+            },
+            "name": "scope",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Id",
+              "maximum": 2147483647,
+              "minimum": 3,
+              "type": "integer"
+            },
+            "name": "id",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Name",
+              "pattern": "^[\\w \\[\\]-]{2,15}$",
+              "type": "string"
+            },
+            "name": "name",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/get_player_status": {
+      "get": {
+        "tags": [
+          "API v1"
+        ],
+        "summary": "Api Get Player Status",
+        "description": "Return a players current status, if they are online.",
+        "operationId": "api_get_player_status_v1_get_player_status_get",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "title": "Id",
+              "maximum": 2147483647,
+              "minimum": 3,
+              "type": "integer"
+            },
+            "name": "id",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Name",
+              "pattern": "^[\\w \\[\\]-]{2,15}$",
+              "type": "string"
+            },
+            "name": "name",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/get_player_scores": {
+      "get": {
+        "tags": [
+          "API v1"
+        ],
+        "summary": "Api Get Player Scores",
+        "description": "Return a list of a given user's recent/best scores.",
+        "operationId": "api_get_player_scores_v1_get_player_scores_get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Scope",
+              "enum": [
+                "recent",
+                "best"
+              ],
+              "type": "string"
+            },
+            "name": "scope",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Id",
+              "maximum": 2147483647,
+              "minimum": 3,
+              "type": "integer"
+            },
+            "name": "id",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Name",
+              "pattern": "^[\\w \\[\\]-]{2,15}$",
+              "type": "string"
+            },
+            "name": "name",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Mods",
+              "type": "string"
+            },
+            "name": "mods",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Mode",
+              "maximum": 11,
+              "minimum": 0,
+              "type": "integer",
+              "default": 0
+            },
+            "name": "mode",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Limit",
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer",
+              "default": 25
+            },
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Include Loved",
+              "type": "boolean",
+              "default": false
+            },
+            "name": "include_loved",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Include Failed",
+              "type": "boolean",
+              "default": true
+            },
+            "name": "include_failed",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/get_player_most_played": {
+      "get": {
+        "tags": [
+          "API v1"
+        ],
+        "summary": "Api Get Player Most Played",
+        "description": "Return the most played beatmaps of a given player.",
+        "operationId": "api_get_player_most_played_v1_get_player_most_played_get",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "title": "Id",
+              "maximum": 2147483647,
+              "minimum": 3,
+              "type": "integer"
+            },
+            "name": "id",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Name",
+              "pattern": "^[\\w \\[\\]-]{2,15}$",
+              "type": "string"
+            },
+            "name": "name",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Mode",
+              "maximum": 11,
+              "minimum": 0,
+              "type": "integer",
+              "default": 0
+            },
+            "name": "mode",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Limit",
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer",
+              "default": 25
+            },
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/get_map_info": {
+      "get": {
+        "tags": [
+          "API v1"
+        ],
+        "summary": "Api Get Map Info",
+        "description": "Return information about a given beatmap.",
+        "operationId": "api_get_map_info_v1_get_map_info_get",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "title": "Id",
+              "maximum": 2147483647,
+              "minimum": 3,
+              "type": "integer"
+            },
+            "name": "id",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Md5",
+              "maxLength": 32,
+              "minLength": 32,
+              "type": "string"
+            },
+            "name": "md5",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/get_map_scores": {
+      "get": {
+        "tags": [
+          "API v1"
+        ],
+        "summary": "Api Get Map Scores",
+        "description": "Return the top n scores on a given beatmap.",
+        "operationId": "api_get_map_scores_v1_get_map_scores_get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Scope",
+              "enum": [
+                "recent",
+                "best"
+              ],
+              "type": "string"
+            },
+            "name": "scope",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Id",
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "name": "id",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Md5",
+              "maxLength": 32,
+              "minLength": 32,
+              "type": "string"
+            },
+            "name": "md5",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Mods",
+              "type": "string"
+            },
+            "name": "mods",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Mode",
+              "maximum": 11,
+              "minimum": 0,
+              "type": "integer",
+              "default": 0
+            },
+            "name": "mode",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Limit",
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer",
+              "default": 50
+            },
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/get_score_info": {
+      "get": {
+        "tags": [
+          "API v1"
+        ],
+        "summary": "Api Get Score Info",
+        "description": "Return information about a given score.",
+        "operationId": "api_get_score_info_v1_get_score_info_get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Id",
+              "maximum": 9223372036854776000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "name": "id",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/get_replay": {
+      "get": {
+        "tags": [
+          "API v1"
+        ],
+        "summary": "Api Get Replay",
+        "description": "Return a given replay (including headers).",
+        "operationId": "api_get_replay_v1_get_replay_get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Id",
+              "maximum": 9223372036854776000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "name": "id",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Include Headers",
+              "type": "boolean",
+              "default": false
+            },
+            "name": "include_headers",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/get_match": {
+      "get": {
+        "tags": [
+          "API v1"
+        ],
+        "summary": "Api Get Match",
+        "description": "Return information of a given multiplayer match.",
+        "operationId": "api_get_match_v1_get_match_get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Id",
+              "maximum": 64,
+              "minimum": 1,
+              "type": "integer"
+            },
+            "name": "id",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/get_leaderboard": {
+      "get": {
+        "tags": [
+          "API v1"
+        ],
+        "summary": "Api Get Global Leaderboard",
+        "operationId": "api_get_global_leaderboard_v1_get_leaderboard_get",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "title": "Sort",
+              "enum": [
+                "tscore",
+                "rscore",
+                "pp",
+                "acc",
+                "plays",
+                "playtime"
+              ],
+              "type": "string",
+              "default": "pp"
+            },
+            "name": "sort",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Mode",
+              "maximum": 11,
+              "minimum": 0,
+              "type": "integer",
+              "default": 0
+            },
+            "name": "mode",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Limit",
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer",
+              "default": 50
+            },
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Offset",
+              "type": "integer",
+              "default": 0,
+              "max": 2147483647,
+              "min": 0
+            },
+            "name": "offset",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Country",
+              "maxLength": 2,
+              "minLength": 2,
+              "type": "string"
+            },
+            "name": "country",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/get_clan": {
+      "get": {
+        "tags": [
+          "API v1"
+        ],
+        "summary": "Api Get Clan",
+        "description": "Return information of a given clan.",
+        "operationId": "api_get_clan_v1_get_clan_get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Id",
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            "name": "id",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/get_mappool": {
+      "get": {
+        "tags": [
+          "API v1"
+        ],
+        "summary": "Api Get Pool",
+        "description": "Return information of a given mappool.",
+        "operationId": "api_get_pool_v1_get_mappool_get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Id",
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            "name": "id",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/clans": {
+      "get": {
+        "tags": [
+          "API v2"
+        ],
+        "summary": "Get Clans",
+        "operationId": "get_clans_v2_clans_get",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "title": "Page",
+              "minimum": 1,
+              "type": "integer",
+              "default": 1
+            },
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Page Size",
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer",
+              "default": 50
+            },
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Success_list_app.api.v2.models.clans.Clan__"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/clans/{clan_id}": {
+      "get": {
+        "tags": [
+          "API v2"
+        ],
+        "summary": "Get Clan",
+        "operationId": "get_clan_v2_clans__clan_id__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Clan Id",
+              "type": "integer"
+            },
+            "name": "clan_id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Success_Clan_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/maps": {
+      "get": {
+        "tags": [
+          "API v2"
+        ],
+        "summary": "Get Maps",
+        "operationId": "get_maps_v2_maps_get",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "title": "Set Id",
+              "type": "integer"
+            },
+            "name": "set_id",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Server",
+              "type": "string"
+            },
+            "name": "server",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Status",
+              "type": "integer"
+            },
+            "name": "status",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Artist",
+              "type": "string"
+            },
+            "name": "artist",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Creator",
+              "type": "string"
+            },
+            "name": "creator",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Filename",
+              "type": "string"
+            },
+            "name": "filename",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Mode",
+              "type": "integer"
+            },
+            "name": "mode",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Frozen",
+              "type": "boolean"
+            },
+            "name": "frozen",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Page",
+              "minimum": 1,
+              "type": "integer",
+              "default": 1
+            },
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Page Size",
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer",
+              "default": 50
+            },
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Success_list_app.api.v2.models.maps.Map__"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/maps/{map_id}": {
+      "get": {
+        "tags": [
+          "API v2"
+        ],
+        "summary": "Get Map",
+        "operationId": "get_map_v2_maps__map_id__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Map Id",
+              "type": "integer"
+            },
+            "name": "map_id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Success_Map_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/players": {
+      "get": {
+        "tags": [
+          "API v2"
+        ],
+        "summary": "Get Players",
+        "operationId": "get_players_v2_players_get",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "title": "Priv",
+              "type": "integer"
+            },
+            "name": "priv",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Country",
+              "type": "string"
+            },
+            "name": "country",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Clan Id",
+              "type": "integer"
+            },
+            "name": "clan_id",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Clan Priv",
+              "type": "integer"
+            },
+            "name": "clan_priv",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Preferred Mode",
+              "type": "integer"
+            },
+            "name": "preferred_mode",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Play Style",
+              "type": "integer"
+            },
+            "name": "play_style",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Page",
+              "minimum": 1,
+              "type": "integer",
+              "default": 1
+            },
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Page Size",
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer",
+              "default": 50
+            },
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Success_list_app.api.v2.models.players.Player__"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/players/{player_id}": {
+      "get": {
+        "tags": [
+          "API v2"
+        ],
+        "summary": "Get Player",
+        "operationId": "get_player_v2_players__player_id__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Player Id",
+              "type": "integer"
+            },
+            "name": "player_id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Success_Player_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/players/{player_id}/status": {
+      "get": {
+        "tags": [
+          "API v2"
+        ],
+        "summary": "Get Player Status",
+        "operationId": "get_player_status_v2_players__player_id__status_get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Player Id",
+              "type": "integer"
+            },
+            "name": "player_id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Success_PlayerStatus_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/players/{player_id}/stats/{mode}": {
+      "get": {
+        "tags": [
+          "API v2"
+        ],
+        "summary": "Get Player Mode Stats",
+        "operationId": "get_player_mode_stats_v2_players__player_id__stats__mode__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Player Id",
+              "type": "integer"
+            },
+            "name": "player_id",
+            "in": "path"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "Mode",
+              "type": "integer"
+            },
+            "name": "mode",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Success_PlayerStats_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/players/{player_id}/stats": {
+      "get": {
+        "tags": [
+          "API v2"
+        ],
+        "summary": "Get Player Stats",
+        "operationId": "get_player_stats_v2_players__player_id__stats_get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Player Id",
+              "type": "integer"
+            },
+            "name": "player_id",
+            "in": "path"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Page",
+              "minimum": 1,
+              "type": "integer",
+              "default": 1
+            },
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Page Size",
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer",
+              "default": 50
+            },
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Success_list_app.api.v2.models.players.PlayerStats__"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/scores": {
+      "get": {
+        "tags": [
+          "API v2"
+        ],
+        "summary": "Get All Scores",
+        "operationId": "get_all_scores_v2_scores_get",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "title": "Map Md5",
+              "type": "string"
+            },
+            "name": "map_md5",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Mods",
+              "type": "integer"
+            },
+            "name": "mods",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Status",
+              "type": "integer"
+            },
+            "name": "status",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Mode",
+              "type": "integer"
+            },
+            "name": "mode",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "User Id",
+              "type": "integer"
+            },
+            "name": "user_id",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Page",
+              "minimum": 1,
+              "type": "integer",
+              "default": 1
+            },
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Page Size",
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer",
+              "default": 50
+            },
+            "name": "page_size",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Success_list_app.api.v2.models.scores.Score__"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/scores/{score_id}": {
+      "get": {
+        "tags": [
+          "API v2"
+        ],
+        "summary": "Get Score",
+        "operationId": "get_score_v2_scores__score_id__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Score Id",
+              "type": "integer"
+            },
+            "name": "score_id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Success_Score_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/oauth/authorize": {
+      "get": {
+        "tags": [
+          "API v2"
+        ],
+        "summary": "Authorize",
+        "description": "Authorize a client to access the API on behalf of a user.",
+        "operationId": "authorize_v2_oauth_authorize_get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Client Id",
+              "type": "integer"
+            },
+            "name": "client_id",
+            "in": "query"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "Redirect Uri",
+              "type": "string"
+            },
+            "name": "redirect_uri",
+            "in": "query"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "Response Type",
+              "pattern": "code",
+              "type": "string"
+            },
+            "name": "response_type",
+            "in": "query"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "Player Id",
+              "type": "integer"
+            },
+            "name": "player_id",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Scope",
+              "pattern": "\\b\\w+\\b(?:,\\s*\\b\\w+\\b)*",
+              "type": "string",
+              "default": ""
+            },
+            "name": "scope",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "State",
+              "type": "string"
+            },
+            "name": "state",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "302": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Authorize V2 Oauth Authorize Get",
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/oauth/token": {
+      "post": {
+        "tags": [
+          "API v2"
+        ],
+        "summary": "Token",
+        "description": "Get an access token for the API.",
+        "operationId": "token_v2_oauth_token_post",
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_token_v2_oauth_token_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Token"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Body_osuComment_web_osu_comment_php_post": {
+        "title": "Body_osuComment_web_osu_comment_php_post",
+        "required": [
+          "b",
+          "s",
+          "r",
+          "m",
+          "a",
+          "u",
+          "p"
+        ],
+        "type": "object",
+        "properties": {
+          "b": {
+            "title": "B",
+            "type": "integer"
+          },
+          "s": {
+            "title": "S",
+            "type": "integer"
+          },
+          "r": {
+            "title": "R",
+            "maximum": 9223372036854776000,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "m": {
+            "title": "M",
+            "maximum": 3,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "a": {
+            "title": "A",
+            "enum": [
+              "get",
+              "post"
+            ],
+            "type": "string"
+          },
+          "target": {
+            "title": "Target",
+            "enum": [
+              "song",
+              "map",
+              "replay"
+            ],
+            "type": "string"
+          },
+          "f": {
+            "title": "F",
+            "maxLength": 6,
+            "minLength": 6,
+            "type": "string"
+          },
+          "starttime": {
+            "title": "Starttime",
+            "type": "integer"
+          },
+          "comment": {
+            "title": "Comment",
+            "maxLength": 80,
+            "minLength": 1,
+            "type": "string"
+          },
+          "u": {
+            "title": "U",
+            "type": "string"
+          },
+          "p": {
+            "title": "P",
+            "type": "string"
+          }
+        }
+      },
+      "Body_osuError_web_osu_error_php_post": {
+        "title": "Body_osuError_web_osu_error_php_post",
+        "required": [
+          "i",
+          "osumode",
+          "gamemode",
+          "gametime",
+          "audiotime",
+          "culture",
+          "beatmap_id",
+          "beatmap_checksum",
+          "exception",
+          "stacktrace",
+          "soft",
+          "beatmap_count",
+          "compatibility",
+          "ram",
+          "version",
+          "exehash",
+          "config"
+        ],
+        "type": "object",
+        "properties": {
+          "u": {
+            "title": "U",
+            "type": "string"
+          },
+          "h": {
+            "title": "H",
+            "type": "string"
+          },
+          "i": {
+            "title": "I",
+            "maximum": 2147483647,
+            "minimum": 3,
+            "type": "integer"
+          },
+          "osumode": {
+            "title": "Osumode",
+            "enum": [
+              "Menu",
+              "Edit",
+              "Play",
+              "Exit",
+              "SelectEdit",
+              "SelectPlay",
+              "SelectDrawings",
+              "Rank",
+              "Update",
+              "Busy",
+              "Unknown",
+              "Lobby",
+              "MatchSetup",
+              "SelectMulti",
+              "RankingVs",
+              "OnlineSelection",
+              "OptionsOffsetWizard",
+              "RankingTagCoop",
+              "RankingTeam",
+              "BeatmapImport",
+              "PackageUpdater",
+              "Benchmark",
+              "Tourney",
+              "Charts"
+            ],
+            "type": "string"
+          },
+          "gamemode": {
+            "title": "Gamemode",
+            "enum": [
+              "Osu",
+              "Taiko",
+              "CatchTheBeat",
+              "OsuMania"
+            ],
+            "type": "string"
+          },
+          "gametime": {
+            "title": "Gametime",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "audiotime": {
+            "title": "Audiotime",
+            "type": "integer"
+          },
+          "culture": {
+            "title": "Culture",
+            "type": "string"
+          },
+          "beatmap_id": {
+            "title": "Beatmap Id",
+            "maximum": 2147483647,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "beatmap_checksum": {
+            "title": "Beatmap Checksum",
+            "maxLength": 32,
+            "minLength": 32,
+            "type": "string"
+          },
+          "exception": {
+            "title": "Exception",
+            "type": "string"
+          },
+          "feedback": {
+            "title": "Feedback",
+            "type": "string"
+          },
+          "stacktrace": {
+            "title": "Stacktrace",
+            "type": "string"
+          },
+          "soft": {
+            "title": "Soft",
+            "type": "boolean"
+          },
+          "beatmap_count": {
+            "title": "Beatmap Count",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "compatibility": {
+            "title": "Compatibility",
+            "type": "boolean"
+          },
+          "ram": {
+            "title": "Ram",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "version": {
+            "title": "Version",
+            "type": "string"
+          },
+          "exehash": {
+            "title": "Exehash",
+            "type": "string"
+          },
+          "config": {
+            "title": "Config",
+            "type": "string"
+          },
+          "ss": {
+            "title": "Ss",
+            "type": "string",
+            "format": "binary"
+          }
+        }
+      },
+      "Body_osuScreenshot_web_osu_screenshot_php_post": {
+        "title": "Body_osuScreenshot_web_osu_screenshot_php_post",
+        "required": [
+          "v",
+          "ss",
+          "u",
+          "p"
+        ],
+        "type": "object",
+        "properties": {
+          "v": {
+            "title": "V",
+            "type": "integer"
+          },
+          "ss": {
+            "title": "Ss",
+            "type": "string",
+            "format": "binary"
+          },
+          "u": {
+            "title": "U",
+            "type": "string"
+          },
+          "p": {
+            "title": "P",
+            "type": "string"
+          }
+        }
+      },
+      "Body_osuSubmitModularSelector_web_osu_submit_modular_selector_php_post": {
+        "title": "Body_osuSubmitModularSelector_web_osu_submit_modular_selector_php_post",
+        "required": [
+          "x",
+          "ft",
+          "fs",
+          "bmk",
+          "iv",
+          "c1",
+          "st",
+          "pass",
+          "osuver",
+          "s"
+        ],
+        "type": "object",
+        "properties": {
+          "x": {
+            "title": "X",
+            "type": "boolean"
+          },
+          "ft": {
+            "title": "Ft",
+            "type": "integer"
+          },
+          "fs": {
+            "title": "Fs",
+            "type": "string",
+            "format": "binary"
+          },
+          "bmk": {
+            "title": "Bmk",
+            "type": "string"
+          },
+          "sbk": {
+            "title": "Sbk",
+            "type": "string"
+          },
+          "iv": {
+            "title": "Iv",
+            "type": "string",
+            "format": "binary"
+          },
+          "c1": {
+            "title": "C1",
+            "type": "string"
+          },
+          "st": {
+            "title": "St",
+            "type": "integer"
+          },
+          "pass": {
+            "title": "Pass",
+            "type": "string"
+          },
+          "osuver": {
+            "title": "Osuver",
+            "type": "string"
+          },
+          "s": {
+            "title": "S",
+            "type": "string",
+            "format": "binary"
+          },
+          "i": {
+            "title": "I",
+            "type": "string",
+            "format": "binary"
+          }
+        }
+      },
+      "Body_token_v2_oauth_token_post": {
+        "title": "Body_token_v2_oauth_token_post",
+        "required": [
+          "grant_type"
+        ],
+        "type": "object",
+        "properties": {
+          "grant_type": {
+            "title": "Grant Type",
+            "type": "string"
+          },
+          "client_id": {
+            "title": "Client Id",
+            "type": "integer"
+          },
+          "client_secret": {
+            "title": "Client Secret",
+            "type": "string"
+          },
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "scope": {
+            "title": "Scope",
+            "pattern": "\\b\\w+\\b(?:,\\s*\\b\\w+\\b)*",
+            "type": "string",
+            "default": ""
+          }
+        }
+      },
+      "Clan": {
+        "title": "Clan",
+        "required": [
+          "id",
+          "name",
+          "tag",
+          "owner",
+          "created_at"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "tag": {
+            "title": "Tag",
+            "type": "string"
+          },
+          "owner": {
+            "title": "Owner",
+            "type": "integer"
+          },
+          "created_at": {
+            "title": "Created At",
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "HTTPValidationError": {
+        "title": "HTTPValidationError",
+        "type": "object",
+        "properties": {
+          "detail": {
+            "title": "Detail",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            }
+          }
+        }
+      },
+      "Map": {
+        "title": "Map",
+        "required": [
+          "id",
+          "server",
+          "set_id",
+          "status",
+          "md5",
+          "artist",
+          "title",
+          "version",
+          "creator",
+          "filename",
+          "last_update",
+          "total_length",
+          "max_combo",
+          "frozen",
+          "plays",
+          "passes",
+          "mode",
+          "bpm",
+          "cs",
+          "ar",
+          "od",
+          "hp",
+          "diff"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "server": {
+            "title": "Server",
+            "type": "string"
+          },
+          "set_id": {
+            "title": "Set Id",
+            "type": "integer"
+          },
+          "status": {
+            "title": "Status",
+            "type": "integer"
+          },
+          "md5": {
+            "title": "Md5",
+            "type": "string"
+          },
+          "artist": {
+            "title": "Artist",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "string"
+          },
+          "creator": {
+            "title": "Creator",
+            "type": "string"
+          },
+          "filename": {
+            "title": "Filename",
+            "type": "string"
+          },
+          "last_update": {
+            "title": "Last Update",
+            "type": "string",
+            "format": "date-time"
+          },
+          "total_length": {
+            "title": "Total Length",
+            "type": "integer"
+          },
+          "max_combo": {
+            "title": "Max Combo",
+            "type": "integer"
+          },
+          "frozen": {
+            "title": "Frozen",
+            "type": "boolean"
+          },
+          "plays": {
+            "title": "Plays",
+            "type": "integer"
+          },
+          "passes": {
+            "title": "Passes",
+            "type": "integer"
+          },
+          "mode": {
+            "title": "Mode",
+            "type": "integer"
+          },
+          "bpm": {
+            "title": "Bpm",
+            "type": "number"
+          },
+          "cs": {
+            "title": "Cs",
+            "type": "number"
+          },
+          "ar": {
+            "title": "Ar",
+            "type": "number"
+          },
+          "od": {
+            "title": "Od",
+            "type": "number"
+          },
+          "hp": {
+            "title": "Hp",
+            "type": "number"
+          },
+          "diff": {
+            "title": "Diff",
+            "type": "number"
+          }
+        }
+      },
+      "OsuBeatmapRequestForm": {
+        "title": "OsuBeatmapRequestForm",
+        "required": [
+          "Filenames",
+          "Ids"
+        ],
+        "type": "object",
+        "properties": {
+          "Filenames": {
+            "title": "Filenames",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "Ids": {
+            "title": "Ids",
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          }
+        }
+      },
+      "Player": {
+        "title": "Player",
+        "required": [
+          "id",
+          "name",
+          "safe_name",
+          "priv",
+          "country",
+          "silence_end",
+          "donor_end",
+          "creation_time",
+          "latest_activity",
+          "clan_id",
+          "clan_priv",
+          "preferred_mode",
+          "play_style"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "safe_name": {
+            "title": "Safe Name",
+            "type": "string"
+          },
+          "priv": {
+            "title": "Priv",
+            "type": "integer"
+          },
+          "country": {
+            "title": "Country",
+            "type": "string"
+          },
+          "silence_end": {
+            "title": "Silence End",
+            "type": "integer"
+          },
+          "donor_end": {
+            "title": "Donor End",
+            "type": "integer"
+          },
+          "creation_time": {
+            "title": "Creation Time",
+            "type": "integer"
+          },
+          "latest_activity": {
+            "title": "Latest Activity",
+            "type": "integer"
+          },
+          "clan_id": {
+            "title": "Clan Id",
+            "type": "integer"
+          },
+          "clan_priv": {
+            "title": "Clan Priv",
+            "type": "integer"
+          },
+          "preferred_mode": {
+            "title": "Preferred Mode",
+            "type": "integer"
+          },
+          "play_style": {
+            "title": "Play Style",
+            "type": "integer"
+          },
+          "custom_badge_name": {
+            "title": "Custom Badge Name",
+            "type": "string"
+          },
+          "custom_badge_icon": {
+            "title": "Custom Badge Icon",
+            "type": "string"
+          },
+          "userpage_content": {
+            "title": "Userpage Content",
+            "type": "string"
+          }
+        }
+      },
+      "PlayerStats": {
+        "title": "PlayerStats",
+        "required": [
+          "id",
+          "mode",
+          "tscore",
+          "rscore",
+          "pp",
+          "plays",
+          "playtime",
+          "acc",
+          "max_combo",
+          "total_hits",
+          "replay_views",
+          "xh_count",
+          "x_count",
+          "sh_count",
+          "s_count",
+          "a_count"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "mode": {
+            "title": "Mode",
+            "type": "integer"
+          },
+          "tscore": {
+            "title": "Tscore",
+            "type": "integer"
+          },
+          "rscore": {
+            "title": "Rscore",
+            "type": "integer"
+          },
+          "pp": {
+            "title": "Pp",
+            "type": "number"
+          },
+          "plays": {
+            "title": "Plays",
+            "type": "integer"
+          },
+          "playtime": {
+            "title": "Playtime",
+            "type": "integer"
+          },
+          "acc": {
+            "title": "Acc",
+            "type": "number"
+          },
+          "max_combo": {
+            "title": "Max Combo",
+            "type": "integer"
+          },
+          "total_hits": {
+            "title": "Total Hits",
+            "type": "integer"
+          },
+          "replay_views": {
+            "title": "Replay Views",
+            "type": "integer"
+          },
+          "xh_count": {
+            "title": "Xh Count",
+            "type": "integer"
+          },
+          "x_count": {
+            "title": "X Count",
+            "type": "integer"
+          },
+          "sh_count": {
+            "title": "Sh Count",
+            "type": "integer"
+          },
+          "s_count": {
+            "title": "S Count",
+            "type": "integer"
+          },
+          "a_count": {
+            "title": "A Count",
+            "type": "integer"
+          }
+        }
+      },
+      "PlayerStatus": {
+        "title": "PlayerStatus",
+        "required": [
+          "login_time",
+          "action",
+          "info_text",
+          "mode",
+          "mods",
+          "beatmap_id"
+        ],
+        "type": "object",
+        "properties": {
+          "login_time": {
+            "title": "Login Time",
+            "type": "integer"
+          },
+          "action": {
+            "title": "Action",
+            "type": "integer"
+          },
+          "info_text": {
+            "title": "Info Text",
+            "type": "string"
+          },
+          "mode": {
+            "title": "Mode",
+            "type": "integer"
+          },
+          "mods": {
+            "title": "Mods",
+            "type": "integer"
+          },
+          "beatmap_id": {
+            "title": "Beatmap Id",
+            "type": "integer"
+          }
+        }
+      },
+      "Score": {
+        "title": "Score",
+        "required": [
+          "id",
+          "map_md5",
+          "userid",
+          "score",
+          "pp",
+          "acc",
+          "max_combo",
+          "mods",
+          "n300",
+          "n100",
+          "n50",
+          "nmiss",
+          "nkatu",
+          "grade",
+          "status",
+          "mode",
+          "play_time",
+          "time_elapsed",
+          "perfect"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "map_md5": {
+            "title": "Map Md5",
+            "type": "string"
+          },
+          "userid": {
+            "title": "Userid",
+            "type": "integer"
+          },
+          "score": {
+            "title": "Score",
+            "type": "integer"
+          },
+          "pp": {
+            "title": "Pp",
+            "type": "number"
+          },
+          "acc": {
+            "title": "Acc",
+            "type": "number"
+          },
+          "max_combo": {
+            "title": "Max Combo",
+            "type": "integer"
+          },
+          "mods": {
+            "title": "Mods",
+            "type": "integer"
+          },
+          "n300": {
+            "title": "N300",
+            "type": "integer"
+          },
+          "n100": {
+            "title": "N100",
+            "type": "integer"
+          },
+          "n50": {
+            "title": "N50",
+            "type": "integer"
+          },
+          "nmiss": {
+            "title": "Nmiss",
+            "type": "integer"
+          },
+          "nkatu": {
+            "title": "Nkatu",
+            "type": "integer"
+          },
+          "grade": {
+            "title": "Grade",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "integer"
+          },
+          "mode": {
+            "title": "Mode",
+            "type": "integer"
+          },
+          "play_time": {
+            "title": "Play Time",
+            "type": "string",
+            "format": "date-time"
+          },
+          "time_elapsed": {
+            "title": "Time Elapsed",
+            "type": "integer"
+          },
+          "perfect": {
+            "title": "Perfect",
+            "type": "boolean"
+          }
+        }
+      },
+      "Success_Clan_": {
+        "title": "Success[Clan]",
+        "required": [
+          "status",
+          "data",
+          "meta"
+        ],
+        "type": "object",
+        "properties": {
+          "status": {
+            "title": "Status",
+            "enum": [
+              "success"
+            ],
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/Clan"
+          },
+          "meta": {
+            "title": "Meta",
+            "type": "object"
+          }
+        }
+      },
+      "Success_Map_": {
+        "title": "Success[Map]",
+        "required": [
+          "status",
+          "data",
+          "meta"
+        ],
+        "type": "object",
+        "properties": {
+          "status": {
+            "title": "Status",
+            "enum": [
+              "success"
+            ],
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/Map"
+          },
+          "meta": {
+            "title": "Meta",
+            "type": "object"
+          }
+        }
+      },
+      "Success_PlayerStats_": {
+        "title": "Success[PlayerStats]",
+        "required": [
+          "status",
+          "data",
+          "meta"
+        ],
+        "type": "object",
+        "properties": {
+          "status": {
+            "title": "Status",
+            "enum": [
+              "success"
+            ],
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/PlayerStats"
+          },
+          "meta": {
+            "title": "Meta",
+            "type": "object"
+          }
+        }
+      },
+      "Success_PlayerStatus_": {
+        "title": "Success[PlayerStatus]",
+        "required": [
+          "status",
+          "data",
+          "meta"
+        ],
+        "type": "object",
+        "properties": {
+          "status": {
+            "title": "Status",
+            "enum": [
+              "success"
+            ],
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/PlayerStatus"
+          },
+          "meta": {
+            "title": "Meta",
+            "type": "object"
+          }
+        }
+      },
+      "Success_Player_": {
+        "title": "Success[Player]",
+        "required": [
+          "status",
+          "data",
+          "meta"
+        ],
+        "type": "object",
+        "properties": {
+          "status": {
+            "title": "Status",
+            "enum": [
+              "success"
+            ],
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/Player"
+          },
+          "meta": {
+            "title": "Meta",
+            "type": "object"
+          }
+        }
+      },
+      "Success_Score_": {
+        "title": "Success[Score]",
+        "required": [
+          "status",
+          "data",
+          "meta"
+        ],
+        "type": "object",
+        "properties": {
+          "status": {
+            "title": "Status",
+            "enum": [
+              "success"
+            ],
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/Score"
+          },
+          "meta": {
+            "title": "Meta",
+            "type": "object"
+          }
+        }
+      },
+      "Success_list_app.api.v2.models.clans.Clan__": {
+        "title": "Success[list[app.api.v2.models.clans.Clan]]",
+        "required": [
+          "status",
+          "data",
+          "meta"
+        ],
+        "type": "object",
+        "properties": {
+          "status": {
+            "title": "Status",
+            "enum": [
+              "success"
+            ],
+            "type": "string"
+          },
+          "data": {
+            "title": "Data",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Clan"
+            }
+          },
+          "meta": {
+            "title": "Meta",
+            "type": "object"
+          }
+        }
+      },
+      "Success_list_app.api.v2.models.maps.Map__": {
+        "title": "Success[list[app.api.v2.models.maps.Map]]",
+        "required": [
+          "status",
+          "data",
+          "meta"
+        ],
+        "type": "object",
+        "properties": {
+          "status": {
+            "title": "Status",
+            "enum": [
+              "success"
+            ],
+            "type": "string"
+          },
+          "data": {
+            "title": "Data",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Map"
+            }
+          },
+          "meta": {
+            "title": "Meta",
+            "type": "object"
+          }
+        }
+      },
+      "Success_list_app.api.v2.models.players.PlayerStats__": {
+        "title": "Success[list[app.api.v2.models.players.PlayerStats]]",
+        "required": [
+          "status",
+          "data",
+          "meta"
+        ],
+        "type": "object",
+        "properties": {
+          "status": {
+            "title": "Status",
+            "enum": [
+              "success"
+            ],
+            "type": "string"
+          },
+          "data": {
+            "title": "Data",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlayerStats"
+            }
+          },
+          "meta": {
+            "title": "Meta",
+            "type": "object"
+          }
+        }
+      },
+      "Success_list_app.api.v2.models.players.Player__": {
+        "title": "Success[list[app.api.v2.models.players.Player]]",
+        "required": [
+          "status",
+          "data",
+          "meta"
+        ],
+        "type": "object",
+        "properties": {
+          "status": {
+            "title": "Status",
+            "enum": [
+              "success"
+            ],
+            "type": "string"
+          },
+          "data": {
+            "title": "Data",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Player"
+            }
+          },
+          "meta": {
+            "title": "Meta",
+            "type": "object"
+          }
+        }
+      },
+      "Success_list_app.api.v2.models.scores.Score__": {
+        "title": "Success[list[app.api.v2.models.scores.Score]]",
+        "required": [
+          "status",
+          "data",
+          "meta"
+        ],
+        "type": "object",
+        "properties": {
+          "status": {
+            "title": "Status",
+            "enum": [
+              "success"
+            ],
+            "type": "string"
+          },
+          "data": {
+            "title": "Data",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Score"
+            }
+          },
+          "meta": {
+            "title": "Meta",
+            "type": "object"
+          }
+        }
+      },
+      "Token": {
+        "title": "Token",
+        "required": [
+          "access_token",
+          "token_type",
+          "expires_in",
+          "expires_at",
+          "scope"
+        ],
+        "type": "object",
+        "properties": {
+          "access_token": {
+            "title": "Access Token",
+            "type": "string"
+          },
+          "refresh_token": {
+            "title": "Refresh Token",
+            "type": "string"
+          },
+          "token_type": {
+            "title": "Token Type",
+            "enum": [
+              "Bearer"
+            ],
+            "type": "string"
+          },
+          "expires_in": {
+            "title": "Expires In",
+            "type": "integer"
+          },
+          "expires_at": {
+            "title": "Expires At",
+            "type": "string"
+          },
+          "scope": {
+            "title": "Scope",
+            "type": "string"
+          }
+        }
+      },
+      "ValidationError": {
+        "title": "ValidationError",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "loc": {
+            "title": "Location",
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            }
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
