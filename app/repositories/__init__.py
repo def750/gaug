@@ -1,4 +1,5 @@
 from . import achievements
+from . import auth
 from . import channels
 from . import clans
 from . import maps
