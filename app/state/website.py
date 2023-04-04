@@ -1,16 +1,16 @@
-__all__ = ('db', 'version', 'cache')
+__all__ = ("db", "version", "cache")
 
 from typing import TYPE_CHECKING
-
+from typing import Union
 
 if TYPE_CHECKING:
     from aiohttp import ClientSession
-    from cmyui.mysql import AsyncSQLPool
     from cmyui.version import Version
 
-db: 'AsyncSQLPool'
-version: 'Version'
+version: "Version"
 
-cache = {
-    'bcrypt': {}
-}
+cache = {"bcrypt": {}}
+
+invalid_logins = {}
+
+tokens: dict[int, dict[int]] = {}
