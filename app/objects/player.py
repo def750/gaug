@@ -394,7 +394,7 @@ class Player:
         ret = ClientPrivileges(0)
         if self.priv & Privileges.UNRESTRICTED:
             ret |= ClientPrivileges.PLAYER
-        if self.priv & Privileges.DONATOR:
+        if self.priv & Privileges.SUPPORTER:
             ret |= ClientPrivileges.SUPPORTER
         if self.priv & Privileges.MODERATOR:
             ret |= ClientPrivileges.MODERATOR

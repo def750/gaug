@@ -67,7 +67,11 @@ from app.utils import seconds_readable
 
 import json
 from cmyui import discord as cd
-from app.constants.gamemodes import GULAG_2_INT, GULAG_2_INT_DEFAULT, GULAG_2_STR_DEFUALT
+from app.constants.gamemodes import (
+    GULAG_2_INT,
+    GULAG_2_INT_DEFAULT,
+    GULAG_2_STR_DEFUALT,
+)
 
 modedict = {
     0: "STD",
@@ -588,6 +592,8 @@ async def get_apikey(ctx: Context) -> Optional[str]:
         ),
     )
     return f"Your API key is now: {ctx.player.api_key}"
+
+
 @command(Privileges.UNRESTRICTED)
 async def _banchorank(ctx: Context) -> Optional[str]:
     """Curious what your bancho rank would be?."""
@@ -609,7 +615,7 @@ async def _banchorank(ctx: Context) -> Optional[str]:
     # Fetch user info from sql
     pp = await app.state.services.database.fetch_one(
         "SELECT pp FROM stats WHERE id = :user_id AND mode = :mode",
-        {"user_id": ctx.player.id, 'mode': GULAG_2_INT[ctx.args[0]]},
+        {"user_id": ctx.player.id, "mode": GULAG_2_INT[ctx.args[0]]},
     )
     if pp[0] < 1:
         return "You have no pp in this gamemode, go play something."
@@ -618,13 +624,15 @@ async def _banchorank(ctx: Context) -> Optional[str]:
     r = await app.state.services.http_client.get(
         url="https://osudaily.net/api/pp.php",
         params={
-            'k': str(app.settings.OSUDAILY_API_KEY),
-            't': 'pp',
-            'v': pp[0],
-            "m": GULAG_2_INT_DEFAULT[ctx.args[0]]
-    })
+            "k": str(app.settings.OSUDAILY_API_KEY),
+            "t": "pp",
+            "v": pp[0],
+            "m": GULAG_2_INT_DEFAULT[ctx.args[0]],
+        },
+    )
     data = json.loads(await r.text())
     return f"Your rank on bancho in osu!{GULAG_2_STR_DEFUALT[ctx.args[0]].capitalize()} would be around {data['rank']:,}"
+
 
 """ Nominator commands
 # The commands below allow users to
@@ -632,7 +640,7 @@ async def _banchorank(ctx: Context) -> Optional[str]:
 """
 
 
-@command(Privileges.NOMINATOR, aliases=["reqs"], hidden=True)
+@command(Privileges.NOMINATORS, aliases=["reqs"], hidden=True)
 async def requests(ctx: Context) -> Optional[str]:
     """Check the nomination request queue."""
     if ctx.args:
@@ -671,7 +679,7 @@ def status_to_id(s: str) -> int:
     return _status_str_to_int_map[s]
 
 
-@command(Privileges.NOMINATOR)
+@command(Privileges.NOMINATORS)
 async def _map(ctx: Context) -> Optional[str]:
     """Changes the ranked status of the most recently /np'ed map."""
     if (
@@ -735,11 +743,11 @@ async def _map(ctx: Context) -> Optional[str]:
 
     if app.settings.RANKED_WEBHOOK is not None:
         if ctx.args[0] == "rank":
-            ecolor = 0x66ccff
+            ecolor = 0x66CCFF
         elif ctx.args[0] == "love":
-            ecolor = 0xff66ab
+            ecolor = 0xFF66AB
         else:
-            ecolor = 0xbcbcbc
+            ecolor = 0xBCBCBC
         # Create discord embed for map
         embed = cd.Embed(
             description=f"[View map on our website](https://{app.settings.DOMAIN}/b/{bmap.id})",
@@ -752,18 +760,20 @@ async def _map(ctx: Context) -> Optional[str]:
         embed.add_field(
             name="Download",
             value=f"[osu!](https://osu.ppy.sh/b/{bmap.id})\n"
-                  f"[Mino](https://catboy.best/d/{bmap.set_id})\n"
-                  f"[Chimu](https://chimu.moe/download/{bmap.set_id})\n"
-                  f"[Kitsu](https://kitsu.moe/download/{bmap.set_id})\n",
-            inline=True
+            f"[Mino](https://catboy.best/d/{bmap.set_id})\n"
+            f"[Chimu](https://chimu.moe/download/{bmap.set_id})\n"
+            f"[Kitsu](https://kitsu.moe/download/{bmap.set_id})\n",
+            inline=True,
         )
         embed.add_field(
             name=f"{bmap.status} by",
             # markdown link
             value=f"[{ctx.player.name}](https://{app.settings.DOMAIN}/u/{ctx.player.id})",
-            inline=True
+            inline=True,
         )
-        embed.set_image(url=f'https://assets.ppy.sh/beatmaps/{bmap.set_id}/covers/cover.jpg')
+        embed.set_image(
+            url=f"https://assets.ppy.sh/beatmaps/{bmap.set_id}/covers/cover.jpg"
+        )
         embed.set_footer(
             text=f"On {app.settings.DOMAIN} osu! server",
             icon_url=f"https://{app.settings.DOMAIN}/static/favicon/favicon-32x32.png",
@@ -952,7 +962,7 @@ async def user(ctx: Context) -> Optional[str]:
     osu_version = player.client_details.osu_version.date if player.online else "Unknown"
     donator_info = (
         f"True (ends {timeago.format(player.donor_end)})"
-        if player.priv & Privileges.DONATOR != 0
+        if player.priv & Privileges.SUPPORTER != 0
         else "False"
     )
 
@@ -1147,15 +1157,31 @@ async def debug(ctx: Context) -> Optional[str]:
 str_priv_dict = {
     "normal": Privileges.UNRESTRICTED,
     "verified": Privileges.VERIFIED,
-    "whitelisted": Privileges.WHITELISTED,
+    "frozen": Privileges.FROZEN,
+    "whitelisted_std_vn": Privileges.WHITELISTED_STD_VN,
+    "whitelisted_taiko_vn": Privileges.WHITELISTED_TAIKO_VN,
+    "whitelisted_catch_vn": Privileges.WHITELISTED_CATCH_VN,
+    "whitelisted_mania_vn": Privileges.WHITELISTED_MANIA_VN,
+    "whitelisted_std_rx": Privileges.WHITELISTED_STD_RX,
+    "whitelisted_taiko_rx": Privileges.WHITELISTED_TAIKO_RX,
+    "whitelisted_catch_rx": Privileges.WHITELISTED_CATCH_RX,
+    "whitelisted_std_ap": Privileges.WHITELISTED_STD_AP,
+
     "supporter": Privileges.SUPPORTER,
-    "premium": Privileges.PREMIUM,
     "alumni": Privileges.ALUMNI,
-    "tournament": Privileges.TOURNEY_MANAGER,
-    "nominator": Privileges.NOMINATOR,
+    "tournament": Privileges.TOURNAMENT_MANAGER,
+    "nominator_std": Privileges.NOMINATOR_STD,
+    "nominator_taiko": Privileges.NOMINATOR_TAIKO,
+    "nominator_catch": Privileges.NOMINATOR_CATCH,
+    "nominator_mania": Privileges.NOMINATOR_MANIA,
+    "qat_std": Privileges.QAT_STD,
+    "qat_taiko": Privileges.QAT_TAIKO,
+    "qat_catch": Privileges.QAT_CATCH,
+    "qat_mania": Privileges.QAT_MANIA,
     "mod": Privileges.MODERATOR,
+    "communitymanager": Privileges.COMMUNITY_MANAGER,
     "admin": Privileges.ADMINISTRATOR,
-    "developer": Privileges.DEVELOPER,
+    "headadmin": Privileges.HEADADMIN,
 }
 
 
@@ -1177,7 +1203,7 @@ async def addpriv(ctx: Context) -> Optional[str]:
     if not target:
         return "Could not find user."
 
-    if bits & Privileges.DONATOR != 0:
+    if bits & Privileges.SUPPORTER != 0:
         return "Please use the !givedonator command to assign donator privileges to players."
 
     await target.add_privs(bits)
@@ -1204,7 +1230,7 @@ async def rmpriv(ctx: Context) -> Optional[str]:
 
     await target.remove_privs(bits)
 
-    if bits & Privileges.DONATOR != 0:
+    if bits & Privileges.SUPPORTER != 0:
         target.donor_end = 0
         await app.state.services.database.execute(
             "UPDATE users SET donor_end = 0 WHERE id = :user_id",
@@ -1362,19 +1388,23 @@ async def server(ctx: Context) -> Optional[str]:
         ),
     )
 
+
 @command(Privileges.DEVELOPER, hidden=True)
 async def crashuser(ctx: Context) -> str:
     """Crashes the persons game lmfao"""
 
     if not ctx.args:
         return "Invalid syntax: !crashuser <user>"
-    if not (target := await app.state.sessions.players.from_cache_or_sql(name=ctx.args[0])):
+    if not (
+        target := await app.state.sessions.players.from_cache_or_sql(name=ctx.args[0])
+    ):
         return "User not found."
     if not target.online:
         return "User is not online."
 
     target.enqueue(app.packets.crash())
     return ":^)"
+
 
 if app.settings.DEVELOPER_MODE:
     """Advanced (& potentially dangerous) commands"""
@@ -1460,7 +1490,7 @@ def ensure_match(
 
         if f is not mp_help and (
             ctx.player not in match.refs
-            and not ctx.player.priv & Privileges.TOURNEY_MANAGER
+            and not ctx.player.priv & Privileges.TOURNAMENT_MANAGER
         ):
             # doesn't have privs to use !mp commands (allow help).
             return None
@@ -2151,7 +2181,7 @@ async def mp_pick(ctx: Context, match: Match) -> Optional[str]:
 """
 
 
-@pool_commands.add(Privileges.TOURNEY_MANAGER, aliases=["h"], hidden=True)
+@pool_commands.add(Privileges.TOURNAMENT_MANAGER, aliases=["h"], hidden=True)
 async def pool_help(ctx: Context) -> Optional[str]:
     """Show all documented mappool commands the player can access."""
     prefix = app.settings.COMMAND_PREFIX
@@ -2167,7 +2197,7 @@ async def pool_help(ctx: Context) -> Optional[str]:
     return "\n".join(cmds)
 
 
-@pool_commands.add(Privileges.TOURNEY_MANAGER, aliases=["c"], hidden=True)
+@pool_commands.add(Privileges.TOURNAMENT_MANAGER, aliases=["c"], hidden=True)
 async def pool_create(ctx: Context) -> Optional[str]:
     """Add a new mappool to the database."""
     if len(ctx.args) != 1:
@@ -2212,7 +2242,7 @@ async def pool_create(ctx: Context) -> Optional[str]:
     return f"{name} created."
 
 
-@pool_commands.add(Privileges.TOURNEY_MANAGER, aliases=["del", "d"], hidden=True)
+@pool_commands.add(Privileges.TOURNAMENT_MANAGER, aliases=["del", "d"], hidden=True)
 async def pool_delete(ctx: Context) -> Optional[str]:
     """Remove a mappool from the database."""
     if len(ctx.args) != 1:
@@ -2241,7 +2271,7 @@ async def pool_delete(ctx: Context) -> Optional[str]:
     return f"{name} deleted."
 
 
-@pool_commands.add(Privileges.TOURNEY_MANAGER, aliases=["a"], hidden=True)
+@pool_commands.add(Privileges.TOURNAMENT_MANAGER, aliases=["a"], hidden=True)
 async def pool_add(ctx: Context) -> Optional[str]:
     """Add a new map to a mappool in the database."""
     if len(ctx.args) != 2:
@@ -2290,7 +2320,7 @@ async def pool_add(ctx: Context) -> Optional[str]:
     return f"{bmap.embed} added to {name}."
 
 
-@pool_commands.add(Privileges.TOURNEY_MANAGER, aliases=["rm", "r"], hidden=True)
+@pool_commands.add(Privileges.TOURNAMENT_MANAGER, aliases=["rm", "r"], hidden=True)
 async def pool_remove(ctx: Context) -> Optional[str]:
     """Remove a map from a mappool in the database."""
     if len(ctx.args) != 2:
@@ -2327,7 +2357,7 @@ async def pool_remove(ctx: Context) -> Optional[str]:
     return f"{mods_slot} removed from {name}."
 
 
-@pool_commands.add(Privileges.TOURNEY_MANAGER, aliases=["l"], hidden=True)
+@pool_commands.add(Privileges.TOURNAMENT_MANAGER, aliases=["l"], hidden=True)
 async def pool_list(ctx: Context) -> Optional[str]:
     """List all existing mappools information."""
     pools = app.state.sessions.pools
@@ -2345,7 +2375,7 @@ async def pool_list(ctx: Context) -> Optional[str]:
     return "\n".join(l)
 
 
-@pool_commands.add(Privileges.TOURNEY_MANAGER, aliases=["i"], hidden=True)
+@pool_commands.add(Privileges.TOURNAMENT_MANAGER, aliases=["i"], hidden=True)
 async def pool_info(ctx: Context) -> Optional[str]:
     """Get all information for a specific mappool."""
     if len(ctx.args) != 1:

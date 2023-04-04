@@ -222,7 +222,6 @@ class ChangeAction(BasePacket):
         #     # Make moai bot leave spectate if player is not playing
         #     player.enqueue(app.packets.spectator_left(app.state.sessions.bot.id))
 
-
         player.status.last_action = player.status.action
 
         # broadcast it to all online players.
@@ -603,7 +602,7 @@ async def login(
     user_info = dict(user_info)  # make a mutable copy
 
     if osu_version.stream == "tourney" and not (
-        user_info["priv"] & Privileges.DONATOR
+        user_info["priv"] & Privileges.SUPPORTER
         and user_info["priv"] & Privileges.UNRESTRICTED
     ):
         # trying to use tourney client with insufficient privileges.
@@ -910,10 +909,8 @@ async def login(
                 # the server, grant them full privileges.
                 await player.add_privs(
                     Privileges.STAFF
-                    | Privileges.NOMINATOR
                     | Privileges.WHITELISTED
-                    | Privileges.TOURNEY_MANAGER
-                    | Privileges.DONATOR
+                    | Privileges.TOURNAMENT_MANAGER
                     | Privileges.ALUMNI,
                 )
 
@@ -1877,7 +1874,7 @@ class TourneyMatchInfoRequest(BasePacket):
         if not 0 <= self.match_id < 64:
             return  # invalid match id
 
-        if not player.priv & Privileges.DONATOR:
+        if not player.priv & Privileges.SUPPORTER:
             return  # insufficient privs
 
         match = app.state.sessions.matches[self.match_id]
@@ -1896,7 +1893,7 @@ class TourneyMatchJoinChannel(BasePacket):
         if not 0 <= self.match_id < 64:
             return  # invalid match id
 
-        if not player.priv & Privileges.DONATOR:
+        if not player.priv & Privileges.SUPPORTER:
             return  # insufficient privs
 
         match = app.state.sessions.matches[self.match_id]
@@ -1922,7 +1919,7 @@ class TourneyMatchLeaveChannel(BasePacket):
         if not 0 <= self.match_id < 64:
             return  # invalid match id
 
-        if not player.priv & Privileges.DONATOR:
+        if not player.priv & Privileges.SUPPORTER:
             return  # insufficient privs
 
         match = app.state.sessions.matches[self.match_id]

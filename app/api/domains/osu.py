@@ -879,41 +879,50 @@ async def osuSubmitModularSelector(
 
                 webhook_url = app.settings.NO1_WEBHOOK
 
-                embed = discord.Embed(description=f'[{score.bmap.full_name}]({score.bmap.url})', color=0x66ccff, timestamp=datetime.utcnow())
+                embed = discord.Embed(
+                    description=f"[{score.bmap.full_name}]({score.bmap.url})",
+                    color=0x66CCFF,
+                    timestamp=datetime.utcnow(),
+                )
 
                 # Embed Header
                 embed.set_author(
-                    name=f'{score.player.full_name} set a new #1',
+                    name=f"{score.player.full_name} set a new #1",
                     url=score.player.url,
-                    icon_url=score.player.avatar_url)
+                    icon_url=score.player.avatar_url,
+                )
 
                 # Set the embed image to the beatmap's cover photo
-                embed.set_image(url=f'https://assets.ppy.sh/beatmaps/{score.bmap.set_id}/covers/cover.jpg')
+                embed.set_image(
+                    url=f"https://assets.ppy.sh/beatmaps/{score.bmap.set_id}/covers/cover.jpg"
+                )
 
                 grade = score.grade.name
-                if grade == 'X' or grade == 'XH':
-                    grade = 'SS'
-                elif grade == 'SH':
-                    grade = 'S'
+                if grade == "X" or grade == "XH":
+                    grade = "SS"
+                elif grade == "SH":
+                    grade = "S"
 
                 # Score details field
                 embed.add_field(
-                    name='Score details',
-                    value=f'**Grade:** {grade}\n'
-                          f'**Score:** {score.score}\n'
-                          f'**pp:** {round(score.pp, 2)}\n'
-                          f'**Accuracy:** {round(score.acc, 2)}\n'
-                          f'**Combo:** {score.max_combo}\n',
-                    inline=True
+                    name="Score details",
+                    value=f"**Grade:** {grade}\n"
+                    f"**Score:** {score.score}\n"
+                    f"**pp:** {round(score.pp, 2)}\n"
+                    f"**Accuracy:** {round(score.acc, 2)}\n"
+                    f"**Combo:** {score.max_combo}\n",
+                    inline=True,
                 )
 
                 # Player details field
                 embed.add_field(
-                    name='Player details',
-                    value=f'[Profile link](https://{app.settings.DOMAIN}/u/{score.player.id})\n'
-                          f'**Global rank:** #{score.player.stats[score.mode].rank}\n'
-                          f'**Total pp:** {score.player.stats[score.mode].pp}\n'
-                          f'**Accuracy:** {round(score.player.stats[score.mode].acc, 2)}\n', inline=True)
+                    name="Player details",
+                    value=f"[Profile link](https://{app.settings.DOMAIN}/u/{score.player.id})\n"
+                    f"**Global rank:** #{score.player.stats[score.mode].rank}\n"
+                    f"**Total pp:** {score.player.stats[score.mode].pp}\n"
+                    f"**Accuracy:** {round(score.player.stats[score.mode].acc, 2)}\n",
+                    inline=True,
+                )
 
                 webhook = discord.Webhook(url=webhook_url)
 
@@ -946,16 +955,19 @@ async def osuSubmitModularSelector(
                             f"bancho:leaderboard:{score.mode.value}",
                             str(score.player.id),
                         )
-                        prev_n1_stats = await stats_repo.fetch_one(prev_n1["id"], score.mode.value)
+                        prev_n1_stats = await stats_repo.fetch_one(
+                            prev_n1["id"], score.mode.value
+                        )
                         prev_n1_pp = prev_n1_stats["pp"]
                         prev_n1_acc = prev_n1_stats["acc"]
                         embed.add_field(
-                            name='Previous #1:',
+                            name="Previous #1:",
                             value=f'[{prev_n1["name"]}](https://{app.settings.DOMAIN}/u/{prev_n1["id"]})\n'
-                                  f'**Global rank:** #{prev_n1_rank}\n'
-                                  f'**Total pp:** {prev_n1_pp}\n'
-                                  f'**Accuracy:** {round(prev_n1_acc, 2)}\n', inline=True)
-
+                            f"**Global rank:** #{prev_n1_rank}\n"
+                            f"**Total pp:** {prev_n1_pp}\n"
+                            f"**Accuracy:** {round(prev_n1_acc, 2)}\n",
+                            inline=True,
+                        )
 
                 webhook.add_embed(embed)
                 await discord.Webhook.post(webhook, app.state.services.http_client)
@@ -1636,9 +1648,9 @@ async def osuComment(
         for cmt in comments:
             # TODO: maybe support player/creator colours?
             # pretty expensive for very low gain, but completion :D
-            if cmt["priv"] & Privileges.NOMINATOR:
+            if cmt["priv"] & Privileges.NOMINATORS:
                 fmt = "bat"
-            elif cmt["priv"] & Privileges.DONATOR:
+            elif cmt["priv"] & Privileges.PERKS:
                 fmt = "supporter"
             else:
                 fmt = ""
@@ -1665,7 +1677,7 @@ async def osuComment(
         else:  # target == "replay"
             target_id = score_id
 
-        if colour and not player.priv & Privileges.DONATOR:
+        if colour and not player.priv & Privileges.PERKS:
             # only supporters can use colours.
             # TODO: should we be restricting them?
             colour = None
@@ -2064,9 +2076,8 @@ async def difficultyRatingHandler(request: Request):
         status_code=status.HTTP_307_TEMPORARY_REDIRECT,
     )
 
+
 @router.get("/web/osu-osz2-bmsubmit-getid.php")
 async def osu_osz2_bsubmit_getid(request: Request):
     # Print everything in the request
     print(request.url)
-
-
